@@ -579,7 +579,6 @@ class ExportHtml(object):
             '>':  '&gt;',
             '<':  '&lt;',
             '\t': '&nbsp;' * self.tab_size,
-            ' ':  '&nbsp;',
             '\n': ''
         }
 
@@ -754,7 +753,8 @@ class ExportHtml(object):
                 self.annotate_text(line, the_colour, the_bgcolour, the_style, empty)
             else:
                 # Normal text formatting
-                tidied_text = self.html_encode(self.view.substr(region))
+                tidied_text_1 = self.html_encode(self.view.substr(region))
+                tidied_text = re.sub(r'^\s|(?!\s\S)\s', '&nbsp;', tidied_text_1)
                 self.format_text(line, tidied_text, the_colour, the_bgcolour, the_style, empty)
 
             if hl_done:

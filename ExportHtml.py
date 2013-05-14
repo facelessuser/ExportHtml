@@ -754,7 +754,7 @@ class ExportHtml(object):
             else:
                 # Normal text formatting
                 tidied_text_1 = self.html_encode(self.view.substr(region))
-                tidied_text = re.sub(r'^\s|(?!\s\S)\s', '&nbsp;', tidied_text_1)
+                tidied_text = re.sub(r'(?!\s($|\S))\s', '&nbsp;', tidied_text_1)
                 self.format_text(line, tidied_text, the_colour, the_bgcolour, the_style, empty)
 
             if hl_done:

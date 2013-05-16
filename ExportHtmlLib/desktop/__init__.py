@@ -135,7 +135,7 @@ def _is_xfce():
     # XFCE detection involves testing the output of a program.
 
     try:
-        return _readfrom(_get_x11_vars() + "xprop -root _DT_SAVE_MODE", shell=1).strip().endswith(' = "xfce4"')
+        return _readfrom(_get_x11_vars() + "xprop -root _DT_SAVE_MODE", shell=1).strip().endswith(' = "xfce4"'.encode('utf-8'))
     except OSError:
         return 0
 
@@ -269,7 +269,10 @@ def open(url, desktop=None, wait=0, status=False):
     elif desktop_in_use == "Mac OS X":
         cmd = ["open", url]
 
-    elif desktop_in_use == "X11" and "BROWSER" in os.environ:
+    elif desktop_in_use == "X11":
+        cmd = ["xdg-open", url]
+
+    elif "BROWSER" in os.environ:
         cmd = [os.environ["BROWSER"], url]
 
     # Finish with an error where no suitable desktop was identified.

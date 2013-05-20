@@ -578,7 +578,7 @@ class ExportHtml(object):
             '&':  '&amp;',
             '>':  '&gt;',
             '<':  '&lt;',
-            '\t': '&nbsp;' * self.tab_size,
+            '\t': ' ' * self.tab_size,
             '\n': ''
         }
 
@@ -637,7 +637,7 @@ class ExportHtml(object):
         self.annot_tbl.append(
             (
                 self.tables, self.curr_row, "Line %d Col %d" % (row + 1, col + 1),
-                self.curr_comment.encode('ascii', 'xmlcharrefreplace')
+                re.sub(r'(?!\s($|\S))\s', '&nbsp;', self.curr_comment.encode('ascii', 'xmlcharrefreplace').replace('\t', ' ' * self.tab_size))
             )
         )
         self.annot_pt = None

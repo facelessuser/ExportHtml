@@ -578,8 +578,7 @@ class ExportHtml(object):
             '&':  '&amp;',
             '>':  '&gt;',
             '<':  '&lt;',
-            '\t': '&nbsp;' * self.tab_size,
-            ' ':  '&nbsp;',
+            '\t': ' ' * self.tab_size,
             '\n': ''
         }
 
@@ -638,7 +637,7 @@ class ExportHtml(object):
         self.annot_tbl.append(
             (
                 self.tables, self.curr_row, "Line %d Col %d" % (row + 1, col + 1),
-                self.curr_comment.encode('ascii', 'xmlcharrefreplace')
+                re.sub(r'(?!\s($|\S))\s', '&nbsp;', self.curr_comment.encode('ascii', 'xmlcharrefreplace').replace('\t', ' ' * self.tab_size))
             )
         )
         self.annot_pt = None
@@ -754,7 +753,8 @@ class ExportHtml(object):
                 self.annotate_text(line, the_colour, the_bgcolour, the_style, empty)
             else:
                 # Normal text formatting
-                tidied_text = self.html_encode(self.view.substr(region))
+                tidied_text_1 = self.html_encode(self.view.substr(region))
+                tidied_text = re.sub(r'(?!\s($|\S))\s', '&nbsp;', tidied_text_1)
                 self.format_text(line, tidied_text, the_colour, the_bgcolour, the_style, empty)
 
             if hl_done:

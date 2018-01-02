@@ -67,7 +67,7 @@ HSL_COLORS = r"""(?x)
 """ % COLOR_PARTS
 
 VARIABLES = r"""(?x)
-    \b(?P<var>var\(\s*(?P<var_content>\w[\w\d]*)\s*\))
+    \b(?P<var>var\(\s*(?P<var_content>[-\w][-\w\d]*)\s*\))
 """
 
 COLOR_MOD = r"""(?x)
@@ -359,12 +359,12 @@ class ColorSchemeMatcher(object):
         self.overrides = []
         if NEW_SCHEMES:
             self.merge_overrides()
-        self.scheme_obj = color_filter(self.scheme_obj)
         self.scheme_file = scheme_file
         self.matched = {}
         self.variables = {}
-
         self.parse_scheme()
+        self.scheme_obj = color_filter(self.scheme_obj)
+        self.setup_matcher()
 
     def convert_format(self, obj):
         """Convert tmTheme object to new format."""
@@ -469,18 +469,51 @@ class ColorSchemeMatcher(object):
     def parse_scheme(self):
         """Parse the color scheme."""
 
-        for k, v in self.scheme_obj.get('variables', {}).items():
+        variables = self.scheme_obj.get('variables', {})
+        for k, v in variables.items():
             m = COLOR_RE.match(v.strip())
-            var = translate_color(m, self.variables, self.scheme_obj.get('variables')) if m is not None else None
-            self.variables[k] = var if var is not None else ""
+            var = translate_color(m, self.variables, self.scheme_obj.get('variables')) if m is not None else ""
+            if var is None:
+                var = ""
+            self.variables[k] = var
+            variables[k] = var
 
-        color_settings = {}
-        for k, v in self.scheme_obj[GLOBAL_OPTIONS].items():
+        global_options = self.scheme_obj[GLOBAL_OPTIONS]
+        for k, v in global_options.items():
             m = COLOR_RE.match(v.strip())
             if m is not None:
                 global_color = translate_color(m, self.variables, {})
                 if global_color is not None:
-                    color_settings[k] = global_color
+                    global_options[k] = global_color
+
+        # Create scope colors mapping from color scheme file
+        for item in self.scheme_obj["rules"]:
+            if item.get('scope', None) is not None:
+                # Foreground color
+                color = item.get('foreground', None)
+                if isinstance(color, list):
+                    # Hashed Syntax Highlighting
+                    for index, c in enumerate(color):
+                        color[index] = translate_color(COLOR_RE.match(c.strip()), self.variables, {})
+                elif isinstance(color, str):
+                    item['foreground'] = translate_color(COLOR_RE.match(color.strip()), self.variables, {})
+                # Background color
+                bgcolor = item.get('background', None)
+                if isinstance(bgcolor, str):
+                    item['background'] = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
+                # Selection foreground color
+                scolor = item.get('selection_foreground', None)
+                if isinstance(scolor, str):
+                    item['selection_foreground'] = translate_color(COLOR_RE.match(scolor.strip()), self.variables, {})
+
+    def setup_matcher(self):
+        """Setup colors for color matcher."""
+
+        color_settings = {}
+        global_options = self.scheme_obj[GLOBAL_OPTIONS]
+        for k, v in global_options.items():
+            if v.startswith('#'):
+                color_settings[k] = v
 
         # Get general theme colors from color scheme file
         bground, bground_sim = self.process_color(
@@ -506,7 +539,6 @@ class ColorSchemeMatcher(object):
         self.special_colors["selection"] = {'color': sbground, 'color_simulated': sbground_sim}
         self.special_colors["gutter"] = {'color': gbground, 'color_simulated': gbground_sim}
         self.special_colors["gutter_foreground"] = {'color': gfground, 'color_simulated': gfground_sim}
-
         self.colors = {}
         # Create scope colors mapping from color scheme file
         for item in self.scheme_obj["rules"]:
@@ -519,33 +551,16 @@ class ColorSchemeMatcher(object):
             if scope is not None:
                 # Foreground color
                 color = item.get('foreground', None)
-                if isinstance(color, list):
-                    # Hashed Syntax Highlighting
-                    for index, c in enumerate(color):
-                        color[index] = translate_color(COLOR_RE.match(c.strip()), self.variables, {})
-                elif isinstance(color, str):
-                    color = translate_color(COLOR_RE.match(color.strip()), self.variables, {})
-                else:
-                    color = None
                 # Background color
                 bgcolor = item.get('background', None)
-                if isinstance(bgcolor, str):
-                    bgcolor = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
-                else:
-                    bgcolor = None
                 # Selection foreground color
                 scolor = item.get('selection_foreground', None)
-                if isinstance(scolor, str):
-                    scolor = translate_color(COLOR_RE.match(scolor.strip()), self.variables, {})
-                else:
-                    scolor = None
                 # Font style
                 if FONT_STYLE in item:
                     for s in item.get(FONT_STYLE, '').split(' '):
                         if s == "bold" or s == "italic":  # or s == "underline":
                             style.append(s)
 
-            if scope is not None:
                 self.add_entry(name, scope, color, bgcolor, scolor, style)
 
     def add_entry(self, name, scope, color, bgcolor, scolor, style):

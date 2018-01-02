@@ -1,3 +1,9 @@
+# ExportHtml 2.12.1
+
+Dec 2, 2017
+
+- **FIX**: Allow `-` in variables names. Write color translations to main scheme object and ensure filtering is done after color translations.
+
 # ExportHtml 2.12.0
 
 Dec 2, 2017

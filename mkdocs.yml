@@ -4,7 +4,7 @@ repo_url: https://github.com/facelessuser/ExportHtml
 edit_uri: tree/master/docs/src/markdown
 site_description: Sublime Text plugin that exports code to HTML or BBCODE for copying, printing, or saving.
 copyright: |
-  Copyright &copy; 2012 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
+  Copyright &copy; 2012 - 2018 <a href="https://github.com/facelessuser">Isaac Muse</a>
   <br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
 
 docs_dir: docs/src/markdown
@@ -39,6 +39,7 @@ markdown_extensions:
   - markdown.extensions.def_list:
   - markdown.extensions.tables:
   - markdown.extensions.abbr:
+  - markdown.extensions.footnotes:
   - pymdownx.extrarawhtml:
   - pymdownx.superfences:
   - pymdownx.highlight:
@@ -77,6 +78,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra-f8303dea60.css
+  - extra-4e53a56959.css
 extra_javascript:
   - extra-d8800ea088.js

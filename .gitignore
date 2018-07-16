@@ -2,3 +2,4 @@
 *.cache
 site/*
 build/*
+.pytest_cache

@@ -132,7 +132,7 @@
             }
         },
 
-        // Sublime view grayscale HTML source; (selections and multi-selections allowed)
+        // Sublime view color HTML source; (selections and multi-selections allowed)
         {
             "Sublime View - Color": {
                 "view_open": true,

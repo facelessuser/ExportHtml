@@ -20,7 +20,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
 ---------------------
 
-Original code has been heavily modifed by Isaac Muse <isaacmuse@gmail.com> for the ExportHtml project.
+Original code has been heavily modified by Isaac Muse <isaacmuse@gmail.com> for the `ExportHtml` project.
 Algorithm has been split out into a separate library and been enhanced with a number of features.
 """
 from __future__ import absolute_import
@@ -66,6 +66,11 @@ HSL_COLORS = r"""(?x)
     \b(?P<hsla>hsla\(\s*(?P<hsla_content>%(float)s\s*,\s*(?:%(percent)s\s*,\s*){2}(?:%(percent)s|%(float)s))\s*\))
 """ % COLOR_PARTS
 
+HWB_COLORS = r"""(?x)
+    \b(?P<hwb>hwb\(\s*(?P<hwb_content>%(float)s\s*,\s*%(percent)s\s*,\s*%(percent)s
+    (?:\s*,\s*(?:%(percent)s|%(float)s))?)\s*\))
+""" % COLOR_PARTS
+
 VARIABLES = r"""(?x)
     \b(?P<var>var\(\s*(?P<var_content>[-\w][-\w\d]*)\s*\))
 """
@@ -77,9 +82,10 @@ COLOR_MOD = r"""(?x)
 COLOR_NAMES = r'\b(?P<x11colors>%s)\b(?!\()' % '|'.join([name for name in x11colors.name2hex_map.keys()])
 
 COLOR_RE = re.compile(
-    r'(?x)(?i)(?:%s|%s|%s|%s|%s)' % (
+    r'(?x)(?i)(?:%s|%s|%s|%s|%s|%s)' % (
         RGB_COLORS,
         HSL_COLORS,
+        HWB_COLORS,
         VARIABLES,
         COLOR_MOD,
         COLOR_NAMES
@@ -87,8 +93,10 @@ COLOR_RE = re.compile(
 )
 
 COLOR_RGB_SPACE_RE = re.compile(
-    r'(?x)(?i)(?:%s|%s|%s)' % (
+    r'(?x)(?i)(?:%s|%s|%s|%s|%s)' % (
         RGB_COLORS,
+        HSL_COLORS,
+        HWB_COLORS,
         VARIABLES,
         COLOR_NAMES
     )
@@ -98,13 +106,16 @@ COLOR_MOD_RE = re.compile(
     r'''(?x)
     color\(\s*
         (?P<base>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})
-        \s+(?P<type>blenda?)\(
-            (?P<color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})
-            \s+(?P<percent>%(percent)s)
-        \)
-        (?P<other>
-            (?:\s+blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s\))+
-        )?
+        \s+(?:
+            (?P<blend>blenda?)\((?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+(?P<blend_percent>%(percent)s)\) |
+            (?P<alpha>a(?:lpha)?)\((?P<alpha_value>(?:%(percent)s|%(float)s))\)
+        )
+        (?P<other>(?:
+            \s+(?:
+                blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s\) |
+                a(?:lpha)?\((?:%(percent)s|%(float)s)\)
+            )
+        )+)?
     \s*\)
     ''' % COLOR_PARTS
 )
@@ -140,7 +151,7 @@ def fmt_float(f, p=0):
 
 
 def alpha_dec_normalize(dec):
-    """Normailze a deciaml alpha value."""
+    """Normalize a decimal alpha value."""
 
     temp = float(dec)
     if temp < 0.0 or temp > 1.0:
@@ -150,7 +161,7 @@ def alpha_dec_normalize(dec):
 
 
 def alpha_percent_normalize(perc):
-    """Normailze a percent alpha value."""
+    """Normalize a percent alpha value."""
 
     alpha_float = clamp(float(perc.strip('%')), 0.0, 100.0) / 100.0
     alpha = "%02x" % round_int(alpha_float * 255.0)
@@ -161,16 +172,26 @@ def blend(m):
     """Blend colors."""
 
     base = m.group('base')
-    color = m.group('color')
-    blend_type = m.group('type')
-    percent = m.group('percent')
-    if percent.endswith('%'):
-        percent = float(percent.strip('%'))
+    if m.group('blend'):
+        blend_type = m.group('blend')
+        color = m.group('blend_color')
+        percent = m.group('blend_percent')
+        if percent.endswith('%'):
+            percent = float(percent.strip('%'))
+        else:
+            percent = int(alpha_dec_normalize(percent), 16) * (100.0 / 255.0)
+        rgba = RGBA(base)
+        rgba.blend(color, percent, alpha=(blend_type == 'blenda'))
+        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
     else:
-        percent = int(alpha_dec_normalize(percent), 16) * (100.0 / 255.0)
-    rgba = RGBA(base)
-    rgba.blend(color, percent, alpha=(blend_type == 'blenda'))
-    color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        percent = m.group('alpha_value')
+        if percent.endswith('%'):
+            alpha = int(alpha_percent_normalize(percent), 16)
+        else:
+            alpha = int(alpha_dec_normalize(percent), 16)
+        rgba = RGBA(base)
+        rgba.a = alpha
+        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
     if m.group('other'):
         color = "color(%s %s)" % (color, m.group('other'))
     return color
@@ -272,6 +293,22 @@ def translate_color(m, var, var_src):
                 alpha = alpha_percent_normalize(content[3])
             else:
                 alpha = alpha_dec_normalize(content[3])
+        elif m.group('hwb'):
+            content = [x.strip() for x in m.group('hwb_content').split(',')]
+            rgba = RGBA()
+            hue = float(content[0])
+            if hue < 0.0 or hue > 360.0:
+                hue = hue % 360.0
+            h = hue / 360.0
+            w = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
+            b = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
+            rgba.fromhwb(h, w, b)
+            color = rgba.get_rgb()
+            if len(content) > 3:
+                if content[3].endswith('%'):
+                    alpha = alpha_percent_normalize(content[3])
+                else:
+                    alpha = alpha_dec_normalize(content[3])
         elif groups.get('var'):
             content = m.group('var_content')
             if content in var:
@@ -323,11 +360,11 @@ class SchemeColors(
         verbose=False
     )
 ):
-    """SchemeColors."""
+    """Scheme colors."""
 
 
 class SchemeSelectors(namedtuple('SchemeSelectors', ['name', 'scope'], verbose=False)):
-    """SchemeSelectors."""
+    """Scheme selectors."""
 
 
 class ColorSchemeMatcher(object):
@@ -367,7 +404,7 @@ class ColorSchemeMatcher(object):
         self.setup_matcher()
 
     def convert_format(self, obj):
-        """Convert tmTheme object to new format."""
+        """Convert `tmTheme` object to new format."""
 
         self.scheme_obj = {
             "variables": {},
@@ -461,7 +498,7 @@ class ColorSchemeMatcher(object):
 
                 self.overrides.append(self.color_scheme)
 
-    def filter(self, scheme):  # noqa A001
+    def filter(self, scheme):  # noqa A003
         """Dummy filter call that does nothing."""
 
         return scheme
@@ -654,7 +691,7 @@ class ColorSchemeMatcher(object):
         """
         Get the core colors (background, foreground) for the view and gutter.
 
-        Get the visible look of the color by simulated transparency if requrested.
+        Get the visible look of the color by simulated transparency if requested.
         """
 
         name = RE_CAMEL_CASE.sub(to_snake, name)
@@ -679,7 +716,7 @@ class ColorSchemeMatcher(object):
         specified by returning None.  This is done by enabling explicit_background.
         This will only show backgrounds that were explicitly specified.
 
-        This was orginially introduced for mdpopups so that it would
+        This was originally introduced for mdpopups so that it would
         know when a background was not needed.  This allowed mdpopups
         to generate syntax highlighted code that could be overlayed on
         block elements with different background colors and allow that

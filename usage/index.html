@@ -1,0 +1,827 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Sublime Text plugin that exports code to HTML or BBCODE for copying, printing, or saving.">
+      
+      
+        <link rel="canonical" href="https://facelessuser.github.io/ExportHtml/usage/">
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.2.0">
+    
+    
+      
+        <title>User Guide - ExportHtml Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.572ca0f0.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.22915126.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.8c900955.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../extra-83f68d2c59.css">
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="__github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#user-guide" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://facelessuser.github.io/ExportHtml" title="ExportHtml Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon">description</i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                ExportHtml Documentation
+              </span>
+              <span class="md-header-nav__topic">
+                User Guide
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/facelessuser/ExportHtml/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://facelessuser.github.io/ExportHtml" title="ExportHtml Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon">description</i>
+      
+    </a>
+    ExportHtml Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/facelessuser/ExportHtml/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#__github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="About ExportHtml" class="md-nav__link">
+      About ExportHtml
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        User Guide
+      </label>
+    
+    <a href="./" title="User Guide" class="md-nav__link md-nav__link--active">
+      User Guide
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-html" title="Exporting HTML" class="md-nav__link">
+    Exporting HTML
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-bbcode" title="Exporting BBCode" class="md-nav__link">
+    Exporting BBCode
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotations-html-only" title="Annotations (HTML only)" class="md-nav__link">
+    Annotations (HTML only)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings-file-options" title="Settings File options" class="md-nav__link">
+    Settings File options
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../contributing/" title="Contributing &amp; Support" class="md-nav__link">
+      Contributing &amp; Support
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../license/" title="License" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-html" title="Exporting HTML" class="md-nav__link">
+    Exporting HTML
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-bbcode" title="Exporting BBCode" class="md-nav__link">
+    Exporting BBCode
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotations-html-only" title="Annotations (HTML only)" class="md-nav__link">
+    Annotations (HTML only)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings-file-options" title="Settings File options" class="md-nav__link">
+    Settings File options
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/facelessuser/ExportHtml/tree/master/docs/src/markdown/usage.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Permanent link"></a></h1>
+<h2 id="exporting-html">Exporting HTML<a class="headerlink" href="#exporting-html" title="Permanent link"></a></h2>
+<p>ExportHtml comes with a number of default commands available, but these can be overridden in the settings file.  You can also create commands directly outside of the settings file bound to the command palette, key bindings, or even the menu.</p>
+<p>If adding a command to the settings file, it goes under the <code>html_panel</code> setting.  These configurations will appear under the <code>Export to HTML: Show Export Menu</code> command palette command.</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Define configurations for the drop down export menu</span>
+<span class="s2">&quot;html_panel&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="c1">// Browser print color (selections and multi-selections allowed)</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Browser Print - Color&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;numbers&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="s2">&quot;wrap&quot;</span><span class="o">:</span> <span class="mi">900</span><span class="p">,</span>
+            <span class="s2">&quot;browser_print&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="s2">&quot;multi_select&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="s2">&quot;color_scheme&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/ExportHtml/ColorSchemes/Print-Color.tmTheme&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;style_gutter&quot;</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+ <span class="p">]</span>
+</pre></div>
+
+<p>The name of the command is the key value, and then you add the parameters you wish to specify.  You can use any combination of settings below.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>numbers</code></td>
+<td>boolean</td>
+<td>Display line numbers in the gutter.</td>
+</tr>
+<tr>
+<td><code>style_gutter</code></td>
+<td>boolean</td>
+<td>Style gutter with theme backgrounds and foregrounds, or just use the default background/foreground.  Default is <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>multi_select</code></td>
+<td>boolean</td>
+<td>If multiple regions are selected in a document, only export what is under those selections. By default only the first selection is recognized.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>highlight_selections</code></td>
+<td>boolean</td>
+<td>Highlights all selections in HTML output using the themes selection colors.  Multi-select option will be ignored if this is set <code>true</code>.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>ignore_selections</code></td>
+<td>boolean</td>
+<td>Ignores selections in the view.  If this is set, <code>multi_select</code> and <code>highlight_selections</code> will be treated as <code>false</code> regardless of their actual value.</td>
+</tr>
+<tr>
+<td><code>wrap</code></td>
+<td>integer</td>
+<td>Define the allowable size in <code>px</code> to wrap lines at.  By default wrapping is not used.</td>
+</tr>
+<tr>
+<td><code>color_scheme</code></td>
+<td>string</td>
+<td>The color scheme (tmTheme) file you would like to use.  By default the current color scheme file is used, or the the alternate default color scheme if defined in the setting <code>alternate_scheme</code>.</td>
+</tr>
+<tr>
+<td><code>clipboard_copy</code></td>
+<td>boolean</td>
+<td>Copy HTML to the clipboard after generation. Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>browser_print</code></td>
+<td>boolean</td>
+<td>When opening in the web browser, also open the browser's print dialog. This will be ignored if <code>view_open</code> is <code>true</code>.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>view_open</code></td>
+<td>boolean</td>
+<td>Open HTML in a Sublime Text tab instead of the web browser.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>no_header</code></td>
+<td>boolean</td>
+<td>Do not display file name, date, and time at the top of the HTML document. Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>date_time_format</code></td>
+<td>string</td>
+<td>String denoting the format for date and time when displaying header.  Please see Python's documentation on <code>time.strftime</code> for detailed info on formatting syntax.  Default is <code>"%m/%d/%y %I:%M:%S"</code>.</td>
+</tr>
+<tr>
+<td><code>show_full_path</code></td>
+<td>boolean</td>
+<td>Show full path for file name when displaying header. Default is <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>save_location</code></td>
+<td>string</td>
+<td>Path to save HTML file.  If the file is wanted in the same file as the original, use ".".  Otherwise, use the absolute path to where the file is desired.  If there is an issue determining where to save the file, or the path does not exist, the OS temp folder will be used. Default is <code>None</code> (use temp folder).</td>
+</tr>
+<tr>
+<td><code>time_stamp</code></td>
+<td>string</td>
+<td>Configure the time stamp of saved HTML when using <code>save_location</code>.  To remove time stamps, just set to an empty string <code>""</code>.  Please see Python's documentation on <code>time.strftime</code> for detailed info on formatting syntax.  Default is <code>"_%m%d%y%H%M%S"</code>.</td>
+</tr>
+<tr>
+<td><code>toolbar</code></td>
+<td>array&nbsp;of&nbsp;strings</td>
+<td>Option to display a toolbar with to access features in a generated HTML.  This setting is an array of keywords that represent the icons in the toolbar to show.  Valid keywords include <code>gutter</code>, <code>print</code>, <code>plain_text</code>, <code>annotation</code>, and <code>wrapping</code>.  Toolbar will appear when you mouse over the upper right corner of the window of the generated HTML.  Default enables all.</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td>string</td>
+<td>Filters to use on the theme's colors.  The string is a sequence of filters separated by <code>;</code>.  The accepted filters are <code>grayscale</code>, <code>invert</code>, <code>sepia</code>, <code>brightness</code>, <code>contrast</code>, <code>glow</code>, <code>saturation</code>, <code>hue</code>, and <code>colorize</code>.  <code>brightness</code>, <code>saturation</code>, and <code>contrast</code> require a float parameter to specify to what magnitude the filter should be applied at.  <code>glow</code> requires a float for intensity (usually something like .1 or .2 is sufficient).  <code>hue</code> and <code>colorize</code> take a float that represents a degree.  <code>hue</code> shifts the hue via the degree given (can accept negative degrees); hues will wrap if they extend past 0 degrees or 360 degrees.  Example: <code>"filter": "sepia;invert;brightness(1.1);saturation(1.3);"</code>.  Default is <code>""</code>.</td>
+</tr>
+<tr>
+<td><code>disable_nbsp</code></td>
+<td>boolean</td>
+<td>Disable the translation of spaces into <code>&amp;nbsp;</code>.  This was originally introduced so I could copy and paste content into Microsoft Outlook.  If this is not desired, you can disable it here.</td>
+</tr>
+<tr>
+<td><code>table_mode</code></td>
+<td>boolean</td>
+<td>Render export of code in tables which makes copy and paste in things like Outlook or Gmail possible. Default is <code>true</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>If you wish to bind a command to a key combination etc., the same settings as above can be used.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;ctrl+alt+n&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;export_html&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;numbers&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;wrap&quot;</span><span class="o">:</span> <span class="mi">900</span><span class="p">,</span>
+        <span class="s2">&quot;browser_print&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;multi_select&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;color_scheme&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/ExportHtml/ColorSchemes/Print-Color.tmTheme&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;style_gutter&quot;</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>When viewing the HTML in your web browser, regardless of the gutter settings, the gutter can be toggled to show or be hidden using the toolbar in the upper right corner of the page.</p>
+<h2 id="exporting-bbcode">Exporting BBCode<a class="headerlink" href="#exporting-bbcode" title="Permanent link"></a></h2>
+<p>ExportHtml can also export selected code as BBCode for posting in forums. Exporting BBCode is very similar to exporting HTML code.  But keep in mind, not all forums have all the BBCode support needed to view ExportHtml's BBCode format, so your mileage may vary.</p>
+<p>If adding a command to the settings file, it goes under the <code>bbcode_panel</code> setting.  These configurations will appear under the <code>Export to BBCode: Show Export Menu</code> command palette command.</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Define configurations for the drop down export menu</span>
+<span class="s2">&quot;bbcode_panel&quot;</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;To Clipboard - Format as BBCode&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;numbers&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="s2">&quot;multi_select&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+<p>The name of the command is the key value, and then you add the parameters you wish to specify.  You can use any combination of settings below.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>numbers</code></td>
+<td>boolean</td>
+<td>Display line numbers in the gutter.</td>
+</tr>
+<tr>
+<td><code>multi_select</code></td>
+<td>boolean</td>
+<td>If multiple regions are selected in a document, only export what is under those selections. By default only the first selection is recognized.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>ignore_selections</code></td>
+<td>boolean</td>
+<td>Ignores selections in the view.  If this is set, <code>multi_select</code> will be treated as <code>false</code> regardless of its actual value.</td>
+</tr>
+<tr>
+<td><code>color_scheme</code></td>
+<td>string</td>
+<td>The color scheme (tmTheme) file you would like to use.  By default the current color scheme file is used, or the the alternate default color scheme if defined in the setting <code>alternate_scheme</code>.</td>
+</tr>
+<tr>
+<td><code>clipboard_copy</code></td>
+<td>boolean</td>
+<td>Copy BBCode to the clipboard after generation. Default is <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>view_open</code></td>
+<td>boolean</td>
+<td>Open text file of BBCode in a Sublime Text tab.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>no_header</code></td>
+<td>boolean</td>
+<td>Do not display file name, date, and time at the top of the HTML document. Default is <code>false</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>If you wish to bind a command to a key combination etc., the same settings as above can be used.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;ctrl+alt+n&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;export_bbcode&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;numbers&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;multi_select&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2 id="annotations-html-only">Annotations (HTML only)<a class="headerlink" href="#annotations-html-only" title="Permanent link"></a></h2>
+<p>Annotations are comments you can make on selected text.  When the HTML is generated, the selected text will be underlined, and when the mouse hovers over them, a tooltip will appear with your comment.</p>
+<p><img alt="annotation_preview" src="../images/annotation_preview.png" /></p>
+<p>In order to use annotations, you must enter into an "Annotation Mode".  This puts your file in a read only state.  At this point, you can select text and create annotations using the annotation commands provided.  When you leave the "Annotation Mode", all annotations will be lost.  So you must export before leaving annotation mode.</p>
+<p>You can access the annotation commands from the command palette or from the context menu.</p>
+<p>The commands are as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enable Annotation Mode</td>
+<td>Turn annotation mode on.</td>
+</tr>
+<tr>
+<td>Disable Annotation Mode</td>
+<td>Turn annotation mode off.</td>
+</tr>
+<tr>
+<td>Annotate Selection</td>
+<td>Annotate the given selection (no multi-select support currently).</td>
+</tr>
+<tr>
+<td>Delete Annotation(s)</td>
+<td>Delete the annotation region the the cursor resides in (multi-select support).</td>
+</tr>
+<tr>
+<td>Delete All Annotations</td>
+<td>Delete all annotation regions.</td>
+</tr>
+<tr>
+<td>Show Annotation Comment</td>
+<td>Show the annotation comment of the region under the cursor.</td>
+</tr>
+</tbody>
+</table>
+<p>You can navigate the annotations in the generated HTML by using a jump table.  You can show the jump table at any time by selecting the annotation button in the toolbar.  You can also click any annotation to show the jump table as well.  If it gets in the way, you can dock it in a different location.</p>
+<p><img alt="annotation_table_preview" src="../images/annotation_table_preview.png" /></p>
+<h2 id="settings-file-options">Settings File options<a class="headerlink" href="#settings-file-options" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alternate_scheme</code></td>
+<td>string&nbsp;or&nbsp;false</td>
+<td>Defines a default theme to be used if a theme is not specified in a command.  When this is false, the current Sublime Text theme in use is used.</td>
+</tr>
+<tr>
+<td><code>alternate_font_size</code></td>
+<td>integer&nbsp;or&nbsp;false</td>
+<td>Define an alternate font_size to use by default instead of the current one in use.  Use the current one in use if set to a literal <code>false</code>.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>alternate_font_face</code></td>
+<td>string&nbsp;or&nbsp;false</td>
+<td>Define an alternate font_face to use by default instead of the current one in use.  Use the current one in use if set to a literal <code>false</code>.  Default is <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>valid_selection_size</code></td>
+<td>integer</td>
+<td>Minimum allowable size for a selection to be accepted for only the selection to be printed.</td>
+</tr>
+<tr>
+<td><code>html_panel</code></td>
+<td>array&nbsp;of&nbsp;commands</td>
+<td>Define export configurations to appear under the <code>Export to HTML: Show Export Menu</code> command palette command.</td>
+</tr>
+<tr>
+<td><code>bbcode_panel</code></td>
+<td>array&nbsp;of&nbsp;commands</td>
+<td>Define export configurations to appear under the <code>Export to BBCode: Show Export Menu</code> command palette command.</td>
+</tr>
+</tbody>
+</table>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../installation/" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Installation
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../contributing/" title="Contributing &amp; Support" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Contributing &amp; Support
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2012 - 2018 <a href="https://github.com/facelessuser">Isaac Muse</a>
+<br><span class="md-footer-custom-text">emoji provided free by <a href="http://www.emojione.com">EmojiOne</a></span>
+
+          </div>
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/facelessuser" class="md-footer-social__link fa fa-github"></a>
+    
+  </div>
+
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.b41f3d20.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../extra-0b9b22dd13.js"></script>
+      
+    
+    
+      
+    
+  </body>
+</html>

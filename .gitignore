@@ -3,3 +3,4 @@
 site/*
 build/*
 .pytest_cache
+.tox/**

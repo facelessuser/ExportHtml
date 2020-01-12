@@ -1,7 +1,8 @@
 # ExportHtml
 
-## 2.14.1
+## 2.15.0
 
+- **NEW**: Respect `no_bold` and `no_italic` options in `font_options`.
 - **FIX**: Fix for not properly handling blending in `HSL` and `HWB` color space.
 - **FIX**: Improved color blending.
 

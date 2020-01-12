@@ -384,6 +384,9 @@ class ExportHtml(object):
         self.padd_top = settings.get('line_padding_top', 0)
         self.padd_bottom = settings.get('line_padding_bottom', 0)
         self.char_limit = int(eh_settings.get("valid_selection_size", 4))
+        font_options = settings.get('font_options', [])
+        self.no_bold = 'no_bold' in font_options
+        self.no_italic = 'no_italic' in font_options
         self.bground = ''
         self.fground = ''
         self.gbground = ''
@@ -693,7 +696,7 @@ class ExportHtml(object):
         """Format the text."""
 
         if not style:
-            style == 'normal'
+            style = 'normal'
 
         if empty and not self.disable_nbsp:
             text = '&nbsp;'
@@ -770,7 +773,12 @@ class ExportHtml(object):
                 else:
                     hl_done = True
 
-                color_match = self.csm.guess_color(scope_name, selected=not (hl_done and empty))
+                color_match = self.csm.guess_color(
+                    scope_name,
+                    selected=not (hl_done and empty),
+                    no_bold=self.no_bold,
+                    no_italic=self.no_italic
+                )
                 color = color_match.fg_simulated
                 style = color_match.style
                 bgcolor = color_match.bg_simulated
@@ -783,7 +791,11 @@ class ExportHtml(object):
                     if self.curr_hl is not None and self.end == self.curr_hl.begin():
                         break
                     self.end += 1
-                color_match = self.csm.guess_color(scope_name)
+                color_match = self.csm.guess_color(
+                    scope_name,
+                    no_bold=self.no_bold,
+                    no_italic=self.no_italic
+                )
                 color = color_match.fg_simulated
                 style = color_match.style
                 bgcolor = color_match.bg_simulated
@@ -829,7 +841,11 @@ class ExportHtml(object):
         # Get the color for the space at the end of a line
         if self.end < self.view.size():
             end_key = self.view.scope_name(self.pt)
-            color_match = self.csm.guess_color(end_key)
+            color_match = self.csm.guess_color(
+                end_key,
+                no_bold=self.no_bold,
+                no_italic=self.no_italic
+            )
             self.ebground = color_match.bg_simulated
 
         # Join line segments

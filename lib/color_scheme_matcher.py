@@ -720,7 +720,7 @@ class ColorSchemeMatcher(object):
 
         return self.scheme_file
 
-    def guess_color(self, scope_key, selected=False, explicit_background=False):
+    def guess_color(self, scope_key, selected=False, explicit_background=False, no_bold=False, no_italic=False):
         """
         Guess the colors and style of the text for the given Sublime scope.
 
@@ -796,7 +796,8 @@ class ColorSchemeMatcher(object):
                 if self.colors[key]["style"] is not None and match > best_match_style:
                     best_match_style = match
                     for s in self.colors[key]["style"]:
-                        style.add(s)
+                        if not (s == "bold" and no_bold) and not (s == "italic" and no_italic):
+                            style.add(s)
                         if s == "bold":
                             style_selectors["bold"] = SchemeSelectors(
                                 self.colors[key]["name"], self.colors[key]["scope"]

@@ -110,7 +110,7 @@ COLOR_MOD_RE = re.compile(
             (?P<blend>blenda?)\(
                 (?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+
                 (?P<blend_percent>%(percent)s)
-                (?P<blend_mode>\s+(?:hsl|rgb|hwb))?\) |
+                (?:\s+(?P<blend_mode>hsl|rgb|hwb))?\) |
             (?P<alpha>a(?:lpha)?)\((?P<alpha_value>(?:%(percent)s|%(float)s))\)
         )
         (?P<other>(?:

@@ -44,19 +44,18 @@ def hue_blend_channel(c1, c2, f):
     c1 *= 360.0
     c2 *= 360.0
 
-    if c1 <= c2:
-        lesser = c1
-        greater = c2
-    else:
-        lesser = c2
-        greater = c1
+    if abs(c1 - c2) > 180.0:
+        if c1 < c2:
+            c1 += 360.0
+        else:
+            c2 += 360.0
+        f = 1.0 - f
 
-    if greater - lesser > 180.0:
-        lesser += 360.0
-
-    value = abs(lesser * f + greater * (1 - f))
-    while value >= 360.0:
+    value = abs(c1 * f + c2 * (1 - f))
+    while value > 360.0:
         value -= 360.0
+
+    print('HUE: ', str(value))
 
     return value * HUE_SCALE
 
@@ -191,30 +190,30 @@ class RGBA(object):
         factor = clamp(clamp(float(percent), 0.0, 100.0) * SCALE_PERCENT, 0.0, 1.0)
 
         if color_space == CS_RGB:
-            self.r = rgb_blend_channel(r, self.r, factor)
-            self.g = rgb_blend_channel(g, self.g, factor)
-            self.b = rgb_blend_channel(b, self.b, factor)
+            self.r = rgb_blend_channel(self.r, r, factor)
+            self.g = rgb_blend_channel(self.g, g, factor)
+            self.b = rgb_blend_channel(self.b, b, factor)
         elif color_space == CS_HSL:
             orig_h, orig_l, orig_s = self.tohls()
-            h, l, s = rgb_to_hls(r * RGB_CHANNEL_SCALE, g * RGB_CHANNEL_SCALE, b * RGB_CHANNEL_SCALE)
-            h = hue_blend_channel(orig_h, h, factor)
-            l = percent_blend_channel(l, orig_l, factor)
-            s = percent_blend_channel(s, orig_s, factor)
+            blend_h, blend_l, blend_s = rgb_to_hls(r * RGB_CHANNEL_SCALE, g * RGB_CHANNEL_SCALE, b * RGB_CHANNEL_SCALE)
+            h = hue_blend_channel(orig_h, blend_h, factor)
+            l = percent_blend_channel(orig_l, blend_l, factor)
+            s = percent_blend_channel(orig_s, blend_s, factor)
             self.fromhls(h, l, s)
         elif color_space == CS_HWB:
             orig_h, orig_w, orig_b = self.tohwb()
-            h, s, v = rgb_to_hsv(r * RGB_CHANNEL_SCALE, g * RGB_CHANNEL_SCALE, b * RGB_CHANNEL_SCALE)
-            w = (1.0 - s) * v
-            b = 1.0 - v
+            blend_h, s, v = rgb_to_hsv(r * RGB_CHANNEL_SCALE, g * RGB_CHANNEL_SCALE, b * RGB_CHANNEL_SCALE)
+            blend_w = (1.0 - s) * v
+            blend_b = 1.0 - v
             h = hue_blend_channel(orig_h, h, factor)
-            w = percent_blend_channel(w, orig_w, factor)
-            b = percent_blend_channel(b, orig_b, factor)
+            w = percent_blend_channel(orig_w, blend_w, factor)
+            b = percent_blend_channel(orig_b, blend_b, factor)
             self.fromhwb(h, w, b)
         else:
             raise ValueError('Invalid color space value: {}'.format(str(color_space)))
 
         if alpha:
-            self.a = rgb_blend_channel(a, self.a, factor)
+            self.a = rgb_blend_channel(self.a, a, factor)
 
     def luminance(self, factor):
         """Get true luminance."""

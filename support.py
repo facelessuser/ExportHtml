@@ -5,7 +5,7 @@ import textwrap
 import webbrowser
 import re
 
-__version__ = "2.14.0"
+__version__ = "2.14.1"
 __pc_name__ = 'ExportHtml'
 
 CSS = '''

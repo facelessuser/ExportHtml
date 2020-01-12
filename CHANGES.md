@@ -1,5 +1,10 @@
 # ExportHtml
 
+## 2.14.1
+
+- **FIX**: Fix some regressions in regard to blending colors.
+- **FIX**: Fix issue where `HWB` blending was used when it shouldn't be.
+
 ## 2.14.0
 
 - **NEW**: Respect `no_bold` and `no_italic` options in `font_options`.

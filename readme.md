@@ -24,7 +24,7 @@ This is a fork of [Andrew Gibson](https://github.com/agibsonsw)'s [PrintHtml](ht
 
 # Documentation
 
-http://facelessuser.github.com/ExportHtml
+https://facelessuser.github.com/ExportHtml
 
 # Credits
 

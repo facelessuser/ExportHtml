@@ -31,7 +31,7 @@
                                 "caption": "Documentation",
                                 "command": "export_html_open_site",
                                 "args": {
-                                    "url": "http://facelessuser.github.io/ExportHtml/"
+                                    "url": "https://facelessuser.github.io/ExportHtml/"
                                 }
                             },
                             {

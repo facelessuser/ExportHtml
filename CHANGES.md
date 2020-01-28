@@ -1,5 +1,10 @@
 # ExportHtml
 
+## 2.14.4
+
+- **FIX**: Fix references to internal color schemes in settings. Color schemes wouldn't load proper as the color scheme
+  names were wrong.
+
 ## 2.14.3
 
 - **FIX**: Mimic Sublime in regards to hue blending.

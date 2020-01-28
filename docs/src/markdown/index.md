@@ -13,7 +13,7 @@ This is a fork of [Andrew Gibson][gibson]'s [PrintHtml][print-html] plugin.  Thi
 - Supports bold and italic theme font styles as well.
 - Configurable output.
 - Format suitable for copying and pasting in emails.
-- 2 included tmTheme files for color and grayscale printing (but any can be used).
+- 2 included sublime-color-scheme files for color and grayscale printing (but any can be used).
 - Export only selections (multi-select supported).
 - Export and show highlights (multi-select supported).
 - Toggle gutter on/off in browser view.

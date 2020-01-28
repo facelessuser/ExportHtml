@@ -16,7 +16,7 @@ If adding a command to the settings file, it goes under the `html_panel` setting
             "wrap": 900,
             "browser_print": true,
             "multi_select": true,
-            "color_scheme": "Packages/ExportHtml/ColorSchemes/Print-Color.tmTheme",
+            "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Color.sublime-color-scheme",
             "style_gutter": false
         }
     }
@@ -33,7 +33,7 @@ Parameter              | Type               | Description
 `highlight_selections` | boolean            | Highlights all selections in HTML output using the themes selection colors.  Multi-select option will be ignored if this is set `true`.  Default is `false`.
 `ignore_selections`    | boolean            | Ignores selections in the view.  If this is set, `multi_select` and `highlight_selections` will be treated as `false` regardless of their actual value.
 `wrap`                 | integer            | Define the allowable size in `px` to wrap lines at.  By default wrapping is not used.
-`color_scheme`         | string             | The color scheme (tmTheme) file you would like to use.  By default the current color scheme file is used, or the the alternate default color scheme if defined in the setting `alternate_scheme`.
+`color_scheme`         | string             | The color scheme (tmTheme or sublime-color-scheme) file you would like to use.  By default the current color scheme file is used, or the alternate default color scheme if defined in the setting `alternate_scheme`.
 `clipboard_copy`       | boolean            | Copy HTML to the clipboard after generation. Default is `false`.
 `browser_print`        | boolean            | When opening in the web browser, also open the browser's print dialog. This will be ignored if `view_open` is `true`.  Default is `false`.
 `view_open`            | boolean            | Open HTML in a Sublime Text tab instead of the web browser.  Default is `false`.
@@ -60,7 +60,7 @@ Example:
         "wrap": 900,
         "browser_print": true,
         "multi_select": true,
-        "color_scheme": "Packages/ExportHtml/ColorSchemes/Print-Color.tmTheme",
+        "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Color.sublime-color-scheme",
         "style_gutter": false
     }
 }

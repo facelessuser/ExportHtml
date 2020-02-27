@@ -1,5 +1,11 @@
 # ExportHtml
 
+## 2.15.0
+
+- **NEW**: Support `lightness()` and `saturation()` in color mod functions.
+- **NEW**: Properly support `alpha(+value)`, `alpha(-value)`, `alpha(*value)`, and `alpha(value)`.
+- **NEW**: Suppport `foreground_adjust`.
+
 ## 2.14.4
 
 - **FIX**: Fix references to internal color schemes in settings. Color schemes wouldn't load proper as the color scheme

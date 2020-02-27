@@ -28,7 +28,7 @@ import sublime
 import codecs
 import re
 from .file_strip.json import sanitize_json
-from .rgba import RGBA, clamp, round_int, CS_RGB, CS_HSL, CS_HWB
+from .rgba import RGBA, clamp, round_int, CS_RGB, CS_HSL, CS_HWB, OP_SCALE, OP_ADD, OP_SUB, OP_NULL
 from . import x11colors
 from os import path
 from collections import namedtuple
@@ -111,12 +111,16 @@ COLOR_MOD_RE = re.compile(
                 (?P<blend_color>\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+
                 (?P<blend_percent>%(percent)s)
                 (?:\s+(?P<blend_mode>hsl|rgb|hwb))?\) |
-            (?P<alpha>a(?:lpha)?)\((?P<alpha_value>(?:%(percent)s|%(float)s))\)
+            (?P<alpha>a(?:lpha)?)\(\s*(?P<alpha_op>[\+\-\*]\s*)?(?P<alpha_value>(?:%(percent)s|%(float)s))\s*\) |
+            (?P<sat>s(?:aturation)?)\(\s*(?P<sat_op>[\+\-\*]\s*)?(?P<sat_value>(?:%(percent)s|%(float)s))\s*\) |
+            (?P<lit>l(?:ightness)?)\(\s*(?P<lit_op>[\+\-\*]\s*)?(?P<lit_value>(?:%(percent)s|%(float)s))\s*\)
         )
         (?P<other>(?:
             \s+(?:
                 blenda?\((?:\#[\dA-Fa-f]{8}|\#[\dA-Fa-f]{6})\s+%(percent)s(?:\s+(?:hsl|rgb|hwb))?\) |
-                a(?:lpha)?\((?:%(percent)s|%(float)s)\)
+                a(?:lpha)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\) |
+                s(?:aturation)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\) |
+                l(?:ightness)?\(\s*(?:[\+\-\*]\s*)?(?:%(percent)s|%(float)s)\s*\)
             )
         )+)?
     \s*\)
@@ -124,6 +128,13 @@ COLOR_MOD_RE = re.compile(
 )
 
 RE_CAMEL_CASE = re.compile('[A-Z]')
+
+OP_MAP = {
+    '': OP_NULL,
+    '*': OP_SCALE,
+    '+': OP_ADD,
+    '-': OP_SUB
+}
 
 
 def packages_path(pth):
@@ -171,11 +182,17 @@ def alpha_percent_normalize(perc):
     return alpha
 
 
-def blend(m):
+def blend_foreground(m):
+    """Blend foreground with limited capability."""
+
+    return blend(m, True)
+
+
+def blend(m, limit=False):
     """Blend colors."""
 
     base = m.group('base')
-    if m.group('blend'):
+    if m.group('blend') and not limit:
         blend_type = m.group('blend')
         color = m.group('blend_color')
         percent = m.group('blend_percent')
@@ -196,15 +213,40 @@ def blend(m):
         rgba = RGBA(base)
         rgba.blend(color, percent, alpha=(blend_type == 'blenda'), color_space=color_space)
         color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
-    else:
+    elif m.group('alpha_value') and not limit:
         percent = m.group('alpha_value')
+        op = OP_MAP[m.group('alpha_op').strip() if m.group('alpha_op') else '']
         if percent.endswith('%'):
-            alpha = int(alpha_percent_normalize(percent), 16)
+            alpha = percent = float(percent.rstrip('%')) / 100.0
         else:
-            alpha = int(alpha_dec_normalize(percent), 16)
+            alpha = percent = float(percent)
         rgba = RGBA(base)
-        rgba.a = alpha
+        rgba.alpha(alpha, op)
         color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+    elif m.group('sat_value'):
+        percent = m.group('sat_value')
+        op = OP_MAP[m.group('sat_op').strip() if m.group('sat_op') else '']
+        if percent.endswith('%'):
+            percent = float(percent.rstrip('%')) / 100.0
+        else:
+            percent = float(percent)
+        rgba = RGBA(base)
+        rgba.saturation(percent, op)
+        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+    elif m.group('lit_value'):
+        percent = m.group('lit_value')
+        op = OP_MAP[m.group('lit_op').strip() if m.group('lit_op') else '']
+        if percent.endswith('%'):
+            percent = float(percent.rstrip('%')) / 100.0
+        else:
+            percent = float(percent)
+        rgba = RGBA(base)
+        rgba.luminance(percent, op)
+        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+    else:
+        rgba = RGBA(base)
+        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+
     if m.group('other'):
         color = "color(%s %s)" % (color, m.group('other'))
     return color
@@ -551,6 +593,9 @@ class ColorSchemeMatcher(object):
                 bgcolor = item.get('background', None)
                 if isinstance(bgcolor, str):
                     item['background'] = translate_color(COLOR_RE.match(bgcolor.strip()), self.variables, {})
+                    fgadj = item.get('foreground_adjust', None)
+                    if isinstance(fgadj, str) and fgadj:
+                        item['foreground_adjust'] = fgadj
                 # Selection foreground color
                 scolor = item.get('selection_foreground', None)
                 if isinstance(scolor, str):
@@ -596,6 +641,7 @@ class ColorSchemeMatcher(object):
             scope = item.get('scope', None)
             color = None
             bgcolor = None
+            fgadj = None
             scolor = None
             style = []
             if scope is not None:
@@ -603,6 +649,8 @@ class ColorSchemeMatcher(object):
                 color = item.get('foreground', None)
                 # Background color
                 bgcolor = item.get('background', None)
+                if bgcolor:
+                    fgadj = item.get('foreground_adjust', None)
                 # Selection foreground color
                 scolor = item.get('selection_foreground', None)
                 # Font style
@@ -611,9 +659,9 @@ class ColorSchemeMatcher(object):
                         if s == "bold" or s == "italic":  # or s == "underline":
                             style.append(s)
 
-                self.add_entry(name, scope, color, bgcolor, scolor, style)
+                self.add_entry(name, scope, color, bgcolor, fgadj, scolor, style)
 
-    def add_entry(self, name, scope, color, bgcolor, scolor, style):
+    def add_entry(self, name, scope, color, bgcolor, fgadj, scolor, style):
         """Add color entry."""
 
         color_gradient = None
@@ -643,7 +691,8 @@ class ColorSchemeMatcher(object):
             "bgcolor_simulated": bg_sim,
             "selection_color": sfg,
             "selection_color_simulated": sfg_sim,
-            "style": style
+            "style": style,
+            "foreground_adjust": fgadj
         }
 
     def process_color_gradient(self, colors, simple_strip=False, bground=None):
@@ -742,6 +791,7 @@ class ColorSchemeMatcher(object):
         color_gradient_selector = None
         bgcolor = self.special_colors['background']['color'] if not explicit_background else None
         bgcolor_sim = self.special_colors['background']['color_simulated'] if not explicit_background else None
+        fgadj = None
         scolor = self.special_colors['selection_foreground']['color']
         scolor_sim = self.special_colors['selection_foreground']['color_simulated']
         style = set([])
@@ -811,6 +861,7 @@ class ColorSchemeMatcher(object):
                     bgcolor = self.colors[key]["bgcolor"]
                     bgcolor_sim = self.colors[key]["bgcolor_simulated"]
                     bg_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
+                    fgadj = self.colors[key]["foreground_adjust"]
 
             if len(style) == 0:
                 style = ""
@@ -820,6 +871,39 @@ class ColorSchemeMatcher(object):
             if not isinstance(color_gradient, list):
                 color_gradient = None
                 color_gradient_selector = None
+
+            if fgadj is not None:
+                if not color_gradient:
+                    try:
+                        content = COLOR_RGB_SPACE_RE.sub(
+                            (lambda match, v=self.variables, vs={}: translate_color(match, v, vs)),
+                            'color({} {})'.format(color, fgadj)
+                        )
+                        n = -1
+                        while n:
+                            content, n = COLOR_MOD_RE.subn(blend_foreground, content)
+                        if color != content:
+                            color, color_sim = self.process_color(content)
+                    except Exception:
+                        pass
+
+                else:
+                    for c in color_gradient:
+                        temp_gradient = []
+                        try:
+                            content = COLOR_RGB_SPACE_RE.sub(
+                                (lambda match, v=self.variables, vs={}: translate_color(match, v, vs)),
+                                'color({} {})'.format(color, fgadj)
+                            )
+                            content = 'color({} {})'.format(c, fgadj)
+                            n = -1
+                            while n:
+                                content, n = COLOR_MOD_RE.subn(blend_foreground, content)
+                            if c != content:
+                                temp_gradient.append(content)
+                                color, color_sim, color_gradient = self.process_color_gradient(temp_gradient)
+                        except Exception:
+                            pass
 
             self.matched[scope_key] = {
                 "color": color,

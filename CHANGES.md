@@ -1,5 +1,14 @@
 # ExportHtml
 
+## 2.15.1
+
+- **FIX**: ST4 now handles `HSL` properly, remove workaround for build 4069.
+- **FIX**: `+`/`-` have to be followed by spaces in `saturation`, `lightness`, and `alpha` or they should be treated as
+  part of the number following them. `*` does not need a space.
+- **FIX**: Add support for `deg` unit type for the hue channel with `HSL` and `HWB`.
+- **FIX**: Sublime will ignore the unit types `rad`, `grad`, and `turn` for `HSL` and `HWB`, but add support for them in
+  case Sublime ever does.
+
 ## 2.15.0
 
 - **NEW**: Support `lightness()` and `saturation()` in color mod functions.

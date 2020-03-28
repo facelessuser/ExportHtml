@@ -7,6 +7,9 @@ Copyright (c) 2012 - 2016 Isaac Muse <isaacmuse@gmail.com>
 import re
 from colorsys import rgb_to_hls, hls_to_rgb, rgb_to_hsv, hsv_to_rgb
 import decimal
+import sublime
+
+HSL_WORKAROUND = int(sublime.version()) < 4069
 
 RGB_CHANNEL_SCALE = 1.0 / 255.0
 HUE_SCALE = 1.0 / 360.0
@@ -54,8 +57,10 @@ def hue_blend_channel(c1, c2, f):
             c1 += 360.0
         else:
             c2 += 360.0
-    # This shouldn't be necessary and is probably a bug in Sublime.
-    f = 1.0 - f
+
+    if HSL_WORKAROUND:
+        # This shouldn't be necessary and is probably a bug in Sublime.
+        f = 1.0 - f
 
     value = abs(c1 * f + c2 * (1 - f))
     while value > 360.0:

@@ -674,7 +674,7 @@ class ColorSchemeMatcher(object):
                 # Font style
                 if FONT_STYLE in item:
                     for s in item.get(FONT_STYLE, '').split(' '):
-                        if s == "bold" or s == "italic":  # or s == "underline":
+                        if s in ('bold', 'italic', 'underline', 'glow'):
                             style.append(s)
 
                 self.add_entry(name, scope, color, bgcolor, fgadj, scolor, style)
@@ -816,7 +816,12 @@ class ColorSchemeMatcher(object):
         color_selector = SchemeSelectors("foreground", "foreground")
         bg_selector = SchemeSelectors("background", "background")
         scolor_selector = SchemeSelectors("selection_foreground", "selection_foreground")
-        style_selectors = {"bold": SchemeSelectors("", ""), "italic": SchemeSelectors("", "")}
+        style_selectors = {
+            "bold": SchemeSelectors("", ""),
+            "italic": SchemeSelectors("", ""),
+            "underline": SchemeSelectors("", ""),
+            "glow": SchemeSelectors("", "")
+        }
         if scope_key in self.matched:
             color = self.matched[scope_key]["color"]
             color_sim = self.matched[scope_key]["color_simulated"]
@@ -872,6 +877,14 @@ class ColorSchemeMatcher(object):
                             )
                         elif s == "italic":
                             style_selectors["italic"] = SchemeSelectors(
+                                self.colors[key]["name"], self.colors[key]["scope"]
+                            )
+                        elif s == "underline":
+                            style_selectors["underline"] = SchemeSelectors(
+                                self.colors[key]["name"], self.colors[key]["scope"]
+                            )
+                        elif s == "glow":
+                            style_selectors["glow"] = SchemeSelectors(
                                 self.colors[key]["name"], self.colors[key]["scope"]
                             )
                 if self.colors[key]["bgcolor"] is not None and match > best_match_bg:

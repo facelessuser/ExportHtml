@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.16.0
+
+- **NEW**: Add `glow` and `underline` support in Sublime syntax color schemes.
+
 ## 2.15.1
 
 - **FIX**: ST4 now handles `HSL` properly, remove workaround for build 4069.

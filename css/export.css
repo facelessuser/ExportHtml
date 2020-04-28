@@ -18,7 +18,8 @@ span.code_gutter { vertical-align: top; }
 .bold { font-weight: bold; }
 .italic { font-style: italic; }
 .normal { font-style: normal; }
-.underline { text-decoration:underline; }
+.glow { text-shadow: 0 0 3px currentColor; }
+.underline { text-decoration: underline; }
 
 /* Wrapping */
 .wrap {

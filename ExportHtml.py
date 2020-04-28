@@ -277,7 +277,7 @@ class ExportHtmlPanelCommand(sublime_plugin.WindowCommand):
     """Show ExportHtml panel."""
 
     def execute(self, value):
-        """Execute command from th equick panel."""
+        """Execute command from the quick panel."""
 
         if value >= 0:
             view = self.window.active_view()
@@ -460,7 +460,7 @@ class ExportHtml(object):
         self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
         self.bground = self.csm.get_special_color('background', simulate_transparency=True)
         if kwargs["style_gutter"]:
-            self.gfground = self.csm.get_special_color('gutterForeground', simulate_transparency=True)
+            self.gfground = self.csm.get_special_color('gutter_foreground', simulate_transparency=True)
             self.gbground = self.csm.get_special_color('gutter', simulate_transparency=True)
         else:
             self.gfground = self.fground

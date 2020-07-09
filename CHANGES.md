@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.16.1
+
+- **FIX**: Fix issue with quick start doc not showing images proper.
+
 ## 2.16.0
 
 - **NEW**: Add `glow` and `underline` support in Sublime syntax color schemes.

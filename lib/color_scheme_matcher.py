@@ -28,7 +28,8 @@ import sublime
 import codecs
 import re
 from .file_strip.json import sanitize_json
-from .rgba import RGBA, clamp, round_int, CS_RGB, CS_HSL, CS_HWB, OP_SCALE, OP_ADD, OP_SUB, OP_NULL
+from .colorcss import RGB, HSL, HWB, CS_RGB, CS_HSL, CS_HWB, OP_SCALE, OP_ADD, OP_SUB, OP_NULL
+from .colorcss.util import clamp, round_int
 from . import x11colors
 from os import path
 from collections import namedtuple
@@ -231,9 +232,9 @@ def blend(m, limit=False):
             percent = float(percent.strip('%'))
         else:
             percent = int(alpha_dec_normalize(percent), 16) * (100.0 / 255.0)
-        rgba = RGBA(base)
+        rgba = RGB(base)
         rgba.blend(color, percent, alpha=(blend_type == 'blenda'), color_space=color_space)
-        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        color = rgba.to_css(alpha=rgba.a == 1.0, prefer_hex=True)
     elif m.group('alpha_value') and not limit:
         percent = m.group('alpha_value')
         op = OP_MAP[m.group('alpha_op').strip() if m.group('alpha_op') else '']
@@ -241,26 +242,26 @@ def blend(m, limit=False):
             alpha = percent = float(percent.rstrip('%')) / 100.0
         else:
             alpha = percent = float(percent)
-        rgba = RGBA(base)
+        rgba = RGB(base)
         rgba.alpha(alpha, op)
-        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        color = rgba.to_css(alpha=rgba.a == 1.0, prefer_hex=True)
     elif m.group('sat_value'):
         percent = m.group('sat_value')
         op = OP_MAP[m.group('sat_op').strip() if m.group('sat_op') else '']
         percent = float(percent.rstrip('%')) / 100.0
-        rgba = RGBA(base)
+        rgba = HSL(RGB(base))
         rgba.saturation(percent, op)
-        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        color = RGB(rgba).to_css(alpha=rgba.a == 1.0, prefer_hex=True)
     elif m.group('lit_value'):
         percent = m.group('lit_value')
         op = OP_MAP[m.group('lit_op').strip() if m.group('lit_op') else '']
         percent = float(percent.rstrip('%')) / 100.0
-        rgba = RGBA(base)
-        rgba.luminance(percent, op)
-        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        rgba = HSL(RGB(base))
+        rgba.lightness(percent, op)
+        color = RGB(rgba).to_css(alpha=rgba.a == 1.0, prefer_hex=True)
     else:
-        rgba = RGBA(base)
-        color = rgba.get_rgb() if rgba.a == 255 else rgba.get_rgba()
+        rgba = RGB(base)
+        color = rgba.to_css(alpha=rgba.a == 1.0, prefer_hex=True)
 
     if m.group('other'):
         color = "color(%s %s)" % (color, m.group('other'))
@@ -275,110 +276,36 @@ def translate_color(m, var, var_src):
     if m is not None:
         groups = m.groupdict()
         if groups.get('hex_compressed'):
-            content = m.group('hex_compressed_content')
-            color = "#%02x%02x%02x" % (
-                int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-            )
+            rgb = RGB('#{}'.get(m.group('hex_compressed_content')))
+            color = rgb.to_css(prefer_hex=True)
         elif groups.get('hexa_compressed'):
-            content = m.group('hexa_compressed_content')
-            color = "#%02x%02x%02x" % (
-                int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-            )
-            alpha = content[3:]
+            rgb = RGB('#{}'.get(m.group('hexa_compressed_content')))
+            color = rgb.to_css(prefer_hex=True)
+            alpha = rgb.a
         elif groups.get('hex'):
-            content = m.group('hex_content')
-            if len(content) == 6:
-                color = "#%02x%02x%02x" % (
-                    int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
-                )
-            else:
-                color = "#%02x%02x%02x" % (
-                    int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-                )
+            rgb = RGB('#{}'.get(m.group('hex_content')))
+            color = rgb.to_css(prefer_hex=True)
         elif groups.get('hexa'):
-            content = m.group('hexa_content')
-            if len(content) == 8:
-                color = "#%02x%02x%02x" % (
-                    int(content[0:2], 16), int(content[2:4], 16), int(content[4:6], 16)
-                )
-                alpha = content[6:]
-            else:
-                color = "#%02x%02x%02x" % (
-                    int(content[0:1] * 2, 16), int(content[1:2] * 2, 16), int(content[2:3] * 2, 16)
-                )
-                alpha = content[3:]
+            rgb = RGB('#{}'.get(m.group('hexa_content')))
+            color = rgb.to_css(prefer_hex=True)
+            alpha = rgb.a
         elif groups.get('rgb'):
-            content = [x.strip() for x in m.group('rgb_content').split(',')]
-            if content[0].endswith('%'):
-                r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                color = "#%02x%02x%02x" % (r, g, b)
-            else:
-                color = "#%02x%02x%02x" % (
-                    clamp(round_int(float(content[0])), 0, 255),
-                    clamp(round_int(float(content[1])), 0, 255),
-                    clamp(round_int(float(content[2])), 0, 255)
-                )
+            rgb = RGB('rgb({})'.get(m.group('rgb_content')))
+            color = rgb.to_css(prefer_hex=True)
         elif groups.get('rgba'):
-            content = [x.strip() for x in m.group('rgba_content').split(',')]
-            if content[0].endswith('%'):
-                r = round_int(clamp(float(content[0].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                g = round_int(clamp(float(content[1].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                b = round_int(clamp(float(content[2].strip('%')), 0.0, 255.0) * (255.0 / 100.0))
-                color = "#%02x%02x%02x" % (r, g, b)
-            else:
-                color = "#%02x%02x%02x" % (
-                    clamp(round_int(float(content[0])), 0, 255),
-                    clamp(round_int(float(content[1])), 0, 255),
-                    clamp(round_int(float(content[2])), 0, 255)
-                )
-            if content[3].endswith('%'):
-                alpha = alpha_percent_normalize(content[3])
-            else:
-                alpha = alpha_dec_normalize(content[3])
+            rgb = RGB('rgb({})'.get(m.group('rgbs_content')))
+            color = rgb.to_css(prefer_hex=True)
+            alpha = rgb.a
         elif groups.get('hsl'):
-            content = [x.strip().lower() for x in m.group('hsl_content').split(',')]
-            rgba = RGBA()
-            hue = norm_angle(content[0])
-            if hue < 0.0 or hue > 360.0:
-                hue = hue % 360.0
-            h = hue / 360.0
-            s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
-            l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
-            rgba.fromhls(h, l, s)
-            color = rgba.get_rgb()
+            rgb = RGB(HSL('hsl({})'.format(m.group('hsl_content'))))
+            color = rgb.to_css(prefer_hex=True)
         elif groups.get('hsla'):
-            content = [x.strip() for x in m.group('hsla_content').split(',')]
-            rgba = RGBA()
-            hue = float(content[0])
-            if hue < 0.0 or hue > 360.0:
-                hue = hue % 360.0
-            h = hue / 360.0
-            s = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
-            l = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
-            rgba.fromhls(h, l, s)
-            color = rgba.get_rgb()
-            if content[3].endswith('%'):
-                alpha = alpha_percent_normalize(content[3])
-            else:
-                alpha = alpha_dec_normalize(content[3])
+            rgb = RGB(HSL('hsl({})'.format(m.group('hsla_content'))))
+            color = rgb.to_css(prefer_hex=True)
+            alpha = rgb.a
         elif m.group('hwb'):
-            content = [x.strip() for x in m.group('hwb_content').split(',')]
-            rgba = RGBA()
-            hue = float(content[0])
-            if hue < 0.0 or hue > 360.0:
-                hue = hue % 360.0
-            h = hue / 360.0
-            w = clamp(float(content[1].strip('%')), 0.0, 100.0) / 100.0
-            b = clamp(float(content[2].strip('%')), 0.0, 100.0) / 100.0
-            rgba.fromhwb(h, w, b)
-            color = rgba.get_rgb()
-            if len(content) > 3:
-                if content[3].endswith('%'):
-                    alpha = alpha_percent_normalize(content[3])
-                else:
-                    alpha = alpha_dec_normalize(content[3])
+            rgb = RGB(HWB('hwb({})'.format(m.group('hwb_content'))))
+            color = rgb.to_css(prefer_hex=True)
         elif groups.get('var'):
             content = m.group('var_content')
             if content in var:
@@ -731,13 +658,13 @@ class ColorSchemeMatcher(object):
             if not color.startswith('#'):
                 continue
 
-            rgba = RGBA(color.replace(" ", ""))
+            rgb = RGB(color.replace(" ", ""))
             if not simple_strip:
                 if bground is None:
                     bground = self.special_colors['background']['color_simulated']
-                rgba.apply_alpha(bground if bground != "" else "#FFFFFF")
+                rgb.apply_alpha(RGB(bground if bground != "" else "#FFFFFF"))
 
-            gradient.append((color, rgba.get_rgb()))
+            gradient.append((color, rgb.to_css(prefer_hex=True)))
         if gradient:
             color, color_sim = gradient[0]
             return color, color_sim, gradient
@@ -759,13 +686,13 @@ class ColorSchemeMatcher(object):
         if not color.startswith('#'):
             return None, None
 
-        rgba = RGBA(color.replace(" ", ""))
+        rgb = RGB(color.replace(" ", ""))
         if not simple_strip:
             if bground is None:
                 bground = self.special_colors['background']['color_simulated']
-            rgba.apply_alpha(bground if bground != "" else "#FFFFFF")
+            rgb.apply_alpha(RGB(bground if bground != "" else "#FFFFFF"))
 
-        return color, rgba.get_rgb()
+        return color, rgb.to_css(prefer_hex=True)
 
     def get_special_color(self, name, simulate_transparency=False):
         """

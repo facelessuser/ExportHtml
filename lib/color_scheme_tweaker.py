@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import absolute_import
 import sublime
-from .rgba import RGBA
+from .colorcss import RGB
 from . import x11colors
 import re
 
@@ -88,7 +88,7 @@ class ColorSchemeTweaker(object):
     def _apply_filter(self, color, f_name, value=None):
         """Apply the filter."""
 
-        if isinstance(color, RGBA):
+        if isinstance(color, RGB):
             if value is None:
                 color.__getattribute__(f_name)()
             else:
@@ -112,12 +112,12 @@ class ColorSchemeTweaker(object):
 
         try:
             assert(fg is not None)
-            rgba_fg = RGBA(fg)
+            rgba_fg = RGB(fg)
         except Exception:
             rgba_fg = fg
         try:
             assert(bg is not None)
-            rgba_bg = RGBA(bg)
+            rgba_bg = RGB(bg)
         except Exception:
             rgba_bg = bg
 
@@ -135,17 +135,17 @@ class ColorSchemeTweaker(object):
                     self._apply_filter(rgba_fg, name, value)
                 if context != "fg":
                     self._apply_filter(rgba_bg, name, value)
-            elif name == "glow" and dual_colors and isinstance(rgba_fg, RGBA) and (bg is None or bg.strip() == ""):
-                rgba = RGBA(rgba_fg.get_rgba())
-                rgba.apply_alpha(self.bground if self.bground != "" else "#FFFFFF")
-                bg = rgba.get_rgb() + ("%02X" % int((255.0 * value)))
+            elif name == "glow" and dual_colors and isinstance(rgba_fg, RGB) and (bg is None or bg.strip() == ""):
+                rgba = RGB(rgba_fg)
+                rgba.apply_alpha(RGB(self.bground if self.bground != "" else "#FFFFFF"))
+                bg = rgba.to_css(prefer_hex=True) + ("%02X" % int((255.0 * value)))
                 try:
-                    rgba_bg = RGBA(bg)
+                    rgba_bg = RGB(bg)
                 except Exception:
                     rgba_bg = bg
         return (
-            rgba_fg.get_rgba() if isinstance(rgba_fg, RGBA) else rgba_fg,
-            rgba_bg.get_rgba() if isinstance(rgba_bg, RGBA) else rgba_bg
+            rgba_fg.to_css(prefer_hex=True, alpha=True) if isinstance(rgba_fg, RGB) else rgba_fg,
+            rgba_bg.to_css(prefer_hex=True, alpha=True) if isinstance(rgba_bg, RGB) else rgba_bg
         )
 
     def tweak(self, scheme, filters, tmtheme=False):
@@ -173,16 +173,16 @@ class ColorSchemeTweaker(object):
                     value = v
                 scheme[GLOBAL_OPTIONS][k] = value
 
-            self.bground = RGBA(
+            self.bground = RGB(
                 self.process_color(
                     scheme[GLOBAL_OPTIONS].get("background", '#FFFFFF')
                 )
-            ).get_rgb()
-            self.fground = RGBA(
+            ).to_css(prefer_hex=True)
+            self.fground = RGB(
                 self.process_color(
                     scheme[GLOBAL_OPTIONS].get("foreground", '#000000')
                 )
-            ).get_rgba()
+            ).to_css(prefer_hex=True, alpha=True)
 
             for rule in scheme['rules']:
                 fg = rule.get("foreground", None)

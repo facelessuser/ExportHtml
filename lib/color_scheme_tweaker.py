@@ -115,15 +115,15 @@ class _Filters:
         r = util.clamp(util.round_half_up((f * (r - 128)) + 128), 0, 255)
         g = util.clamp(util.round_half_up((f * (g - 128)) + 128), 0, 255)
         b = util.clamp(util.round_half_up((f * (b - 128)) + 128), 0, 255)
-        color.red = r
-        color.green = g
-        color.blue = b
+        color.red = r / 255
+        color.green = g / 255
+        color.blue = b / 255
 
     @staticmethod
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in color.coords()]
+        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in color.coords()]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF

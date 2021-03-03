@@ -129,12 +129,6 @@ def handle_vars(string, variables, parents=None):
     return RE_VARS.sub(functools.partial(_var_replace, var=temp_vars, parents=parent_vars), string)
 
 
-def contrast_ratio(lum1, lum2):
-    """Get contrast ratio."""
-
-    return (lum1 + 0.05) / (lum2 + 0.05) if (lum1 > lum2) else (lum2 + 0.05) / (lum1 + 0.05)
-
-
 class ColorMod:
     """Color utilities."""
 
@@ -392,7 +386,7 @@ class ColorMod:
         this essentially fulfills the intention of their min-contrast.
         """
 
-        ratio = color1.contrast_ratio(color2)
+        ratio = color1.contrast(color2)
 
         # Already meet the minimum contrast or the request is impossible
         if ratio > target or target < 1:
@@ -425,7 +419,7 @@ class ColorMod:
             )
             temp.set(primary, mid_mix)
             temp.set(secondary, mid_other)
-            ratio = temp.contrast_ratio(color2)
+            ratio = temp.contrast(color2)
 
             if ratio < target:
                 min_mix = mid_mix

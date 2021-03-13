@@ -1,12 +1,6 @@
 [
     { "caption": "-" },
-    {
-        "caption": "Export",
-        "children":
-        [
-            { "command": "export_html_panel", "caption": "HTML" }
-        ]
-    },
+    { "command": "export_html_panel", "caption": "Export to HTML" },
     {
         "caption": "Annotations",
         "children":

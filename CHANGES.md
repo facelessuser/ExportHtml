@@ -1,5 +1,15 @@
 # ExportHtml
 
+## 2.17.0
+
+- **NEW**: Drop BBCode support.
+- **NEW**: Use recent Sublime API commands, such as `view.style()` and `view.style_for_scope()` instead of old legacy
+  method.
+- **NEW**: Use `coloraide` dependency for color handling.
+- **FIX**: Recent changes should allow `min-contrast` usage in themes to work.
+- **FIX**: Recent changes should allow for handling invalid color in color schemes better.
+- **FIX**: Recent changes should fix some issues with hashed schemes.
+
 ## 2.16.1
 
 - **FIX**: Fix issue with quick start doc not showing images proper.

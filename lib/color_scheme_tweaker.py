@@ -89,14 +89,16 @@ class _Filters:
     def colorize(color, deg):
         """Colorize the color with the given hue."""
 
-        h = color.get('hsl.hue')
-        h = util.clamp(deg, 0, 360)
-        color.set('hsl.hue', h)
+        if color.is_nan('hsl.hue'):
+            return
+        color.set('hsl.hue', deg % 360)
 
     @staticmethod
     def hue(color, deg):
         """Shift the hue."""
 
+        if color.is_nan('hsl.hue'):
+            return
         h = color.get('hsl.hue')
         h += deg
         h = color.set('hsl.hue', h % 360)
@@ -105,7 +107,7 @@ class _Filters:
     def contrast(color, factor):
         """Adjust contrast."""
 
-        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in color.coords()]
+        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
         # Algorithm can't handle any thing beyond +/-255 (or a factor from 0 - 2)
         # Convert factor between (-255, 255)
         f = (util.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
@@ -123,7 +125,7 @@ class _Filters:
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in color.coords()]
+        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in util.no_nan(color.coords())]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF
@@ -135,7 +137,7 @@ class _Filters:
     def saturation(color, factor):
         """Saturate or unsaturate the color by the given factor."""
 
-        s = color.get('hsl.saturation') / 100.0
+        s = util.no_nan(color.get('hsl.saturation')) / 100.0
         s = util.clamp(s + factor - 1.0, 0.0, 1.0)
         color.set('hsl.saturation', s * 100)
 
@@ -152,9 +154,10 @@ class _Filters:
     def sepia(color):
         """Apply a sepia filter to the color."""
 
-        r = util.clamp((color.red * .393) + (color.green * .769) + (color.blue * .189), 0, 1)
-        g = util.clamp((color.red * .349) + (color.green * .686) + (color.blue * .168), 0, 1)
-        b = util.clamp((color.red * .272) + (color.green * .534) + (color.blue * .131), 0, 1)
+        red, green, blue = util.no_nan(color.coords())
+        r = util.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
+        g = util.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
+        b = util.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
         color.red = r
         color.green = g
         color.blue = b
@@ -203,7 +206,7 @@ class _Filters:
         Brightness is determined by perceived luminance.
         """
 
-        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in color.coords()]
+        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
         channels = ["r", "g", "b"]
         total_lumes = util.clamp(util.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
 
@@ -232,6 +235,141 @@ class _Filters:
         color.red = r
         color.green = g
         color.blue = b
+
+
+class ColorTweaker(object):
+    """Tweak the color scheme with the provided filter(s)."""
+
+    def __init__(self, filters):
+        """Initialize."""
+
+        self.filters = []
+        for f in filters.split(";"):
+            m = FILTER_MATCH.match(f)
+            if m:
+                if m.group(1):
+                    self.filters.append([m.group(1), float(m.group(2)), m.group(4) if m.group(4) else "all"])
+                else:
+                    self.filters.append([m.group(3), 0.0, m.group(4) if m.group(4) else "all"])
+
+    def _apply_filter(self, color, f_name, value=None):
+        """Apply the filter."""
+
+        if isinstance(color, Color):
+            if value is None:
+                getattr(_Filters, f_name)(color)
+            else:
+                getattr(_Filters, f_name)(color, value)
+
+    def _filter_colors(self, *args, **kwargs):
+        """Filter the colors."""
+
+        global_settings = kwargs.get("global_settings", False)
+        dual_colors = False
+        if len(args) == 1:
+            fg = args[0]
+            bg = None
+        elif len(args) == 2:
+            fg = args[0]
+            bg = args[1]
+            if not global_settings:
+                dual_colors = True
+        else:
+            return None, None
+
+        try:
+            assert(fg is not None)
+            rgba_fg = Color(fg)
+        except Exception:
+            rgba_fg = fg
+        try:
+            assert(bg is not None)
+            rgba_bg = Color(bg)
+        except Exception:
+            rgba_bg = bg
+
+        for f in self.filters:
+            name = f[0]
+            value = f[1]
+            context = f[2]
+            if name in ("grayscale", "sepia", "invert"):
+                if context != "bg":
+                    self._apply_filter(rgba_fg, name)
+                if context != "fg":
+                    self._apply_filter(rgba_bg, name)
+            elif name in ("saturation", "brightness", "hue", "colorize", "contrast"):
+                if context != "bg":
+                    self._apply_filter(rgba_fg, name, value)
+                if context != "fg":
+                    self._apply_filter(rgba_bg, name, value)
+            elif (
+                name == "glow" and dual_colors and isinstance(rgba_fg, Color) and
+                (bg is None or bg.strip() == "" or bg == "none")
+            ):
+                rgba = Color(rgba_fg)
+                rgba.overlay(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
+                bg = rgba.to_string(hex=True, alpha=False) + ("%02X" % int((255.0 * value)))
+                try:
+                    rgba_bg = Color(bg)
+                except Exception:
+                    rgba_bg = bg
+        return (
+            rgba_fg.to_string(hex=True) if isinstance(rgba_fg, Color) else rgba_fg,
+            rgba_bg.to_string(hex=True) if isinstance(rgba_bg, Color) else rgba_bg
+        )
+
+    def tweak(self, fg=None, bg=None):
+        """Tweak the theme with the provided filters."""
+
+        if len(self.filters):
+            if fg is None:
+                _, value = self._filter_colors(None, self.process_color(bg), global_settings=True)
+                if value is None:
+                    value = bg
+                return None, value
+            if bg is None:
+                _, value = self._filter_colors(None, self.process_color(fg))
+                if value is None:
+                    value = fg
+                return value, None
+            else:
+                value1, value2 = self._filter_colors(self.process_color(fg), self.process_color(bg))
+                if value1 is None:
+                    value1 = fg
+                if value2 is None:
+                    value2 = bg
+                return value1, value2
+
+        return fg, bg
+
+    def process_color(self, color):
+        """Process the color."""
+
+        if color is None or color.strip() == "" or color == "none":
+            return None
+
+        if not color.startswith('#'):
+            return None
+        return color
+
+    def get_filters(self):
+        """Get the filters."""
+
+        filters = []
+        for f in self.filters:
+            if f[0] in ("invert", "grayscale", "sepia"):
+                filters.append(f[0])
+            elif f[0] in ("hue", "colorize"):
+                filters.append(f[0] + "(%d)" % int(f[1]))
+            elif f[0] in ("saturation", "brightness", "contrast"):
+                filters.append(f[0] + "(%f)" % f[1])
+            elif f[0] == 'glow':
+                filters.append(f[0] + "(%f)" % f[1])
+            else:
+                continue
+            if f[2] != "all":
+                filters[-1] = filters[-1] + ("@%s" % f[2])
+        return filters
 
 
 class ColorSchemeTweaker(object):
@@ -287,7 +425,10 @@ class ColorSchemeTweaker(object):
                     self._apply_filter(rgba_fg, name, value)
                 if context != "fg":
                     self._apply_filter(rgba_bg, name, value)
-            elif name == "glow" and dual_colors and isinstance(rgba_fg, Color) and (bg is None or bg.strip() == ""):
+            elif (
+                name == "glow" and dual_colors and isinstance(rgba_fg, Color) and
+                (bg is None or bg.strip() == "" or bg == "none")
+            ):
                 rgba = Color(rgba_fg)
                 rgba.overlay(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
                 bg = rgba.to_string(hex=True, alpha=False) + ("%02X" % int((255.0 * value)))
@@ -362,7 +503,7 @@ class ColorSchemeTweaker(object):
     def process_color(self, color):
         """Process the color."""
 
-        if color is None or color.strip() == "":
+        if color is None or color.strip() == "" or color == "none":
             return None
 
         if not color.startswith('#'):

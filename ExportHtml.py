@@ -31,9 +31,10 @@ import re
 from .HtmlAnnotations import get_annotations
 from .lib.browser import open_in_browser
 from .lib.color_scheme_matcher import ColorSchemeMatcher
-from .lib.color_scheme_tweaker import ColorSchemeTweaker
+from .lib.color_scheme_tweaker import ColorSchemeTweaker, ColorTweaker
 from .lib.notify import notify
 import jinja2
+from collections import namedtuple
 
 JS_DIR = ""
 
@@ -245,6 +246,17 @@ HTML_JS_WRAP = '''
 '''
 
 
+class SchemeColors(
+    namedtuple(
+        'SchemeColors',
+        [
+            'fg_simulated', "bg_simulated", "style"
+        ]
+    )
+):
+    """Scheme colors."""
+
+
 def getjs(file_name):
     """Get JS file."""
 
@@ -427,6 +439,7 @@ class ExportHtml(object):
         self.no_header = kwargs["no_header"]
         self.annot_tbl = []
         self.toolbar = kwargs["toolbar"]
+        self.legacy = eh_settings.get('legacy_color_matcher', False)
         if eh_settings.get("toolbar_orientation", "horizontal") == "vertical":
             self.toolbar_orientation = "block"
         else:
@@ -452,19 +465,73 @@ class ExportHtml(object):
                 if not sel.empty():
                     self.highlights.append(sel)
 
-        self.csm = ColorSchemeMatcher(
-            scheme_file,
-            color_filter=(lambda x: ColorSchemeTweaker().tweak(x, kwargs["filter"]))
-        )
+        self.tweak_cache = {}
+        self.tweaker = ColorTweaker(kwargs["filter"])
 
-        self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
-        self.bground = self.csm.get_special_color('background', simulate_transparency=True)
-        if kwargs["style_gutter"]:
-            self.gfground = self.csm.get_special_color('gutter_foreground', simulate_transparency=True)
-            self.gbground = self.csm.get_special_color('gutter', simulate_transparency=True)
+        if self.legacy:
+            print('ExportHtml: Using legacy color matcher')
+            self.csm = ColorSchemeMatcher(
+                scheme_file,
+                color_filter=(lambda x: ColorSchemeTweaker().tweak(x, kwargs["filter"]))
+            )
+            self.fground = self.csm.get_special_color('foreground', simulate_transparency=True)
+            self.bground = self.csm.get_special_color('background', simulate_transparency=True)
+            if kwargs["style_gutter"]:
+                self.gfground = self.csm.get_special_color('gutter_foreground', simulate_transparency=True)
+                self.gbground = self.csm.get_special_color('gutter', simulate_transparency=True)
+            else:
+                self.gfground = self.fground
+                self.gbground = self.bground
         else:
-            self.gfground = self.fground
-            self.gbground = self.bground
+            self.fground = self.tweak(self.guess_style('source, text').fg_simulated, None)[0]
+            self.bground = self.tweak(None, self.guess_style('source, text').bg_simulated)[1]
+            self.gfground = self.tweak(self.view.style().get('gutter_foreground', self.bground), None)[0]
+            self.gbground = self.tweak(None, self.view.style().get('gutter', self.fground))[1]
+
+    def tweak(self, color1, color2):
+        """Tweak color."""
+
+        key = (color1, color2)
+        if key in self.tweak_cache:
+            return self.tweak_cache[key]
+        value = self.tweaker.tweak(*key)
+        self.tweak_cache[key] = value
+        return value
+
+    def guess_style(self, scope, selected=False, no_bold=False, no_italic=False, explicit_background=False):
+        """Guess color."""
+
+        if self.legacy:
+            return self.csm.guess_color(self.view, scope, selected, no_bold, no_italic, explicit_background)
+        else:
+            # Remove leading '.' to account for old style CSS
+            scope_style = self.view.style_for_scope(scope.lstrip('.'))
+            style = {}
+            style['foreground'] = scope_style['foreground']
+            style['background'] = scope_style.get('background')
+            style['bold'] = scope_style.get('bold', False) and not no_bold
+            style['italic'] = scope_style.get('italic', False) and not no_italic
+            style['underline'] = scope_style.get('underline', False)
+            style['glow'] = scope_style.get('glow', False)
+
+            font_styles = []
+            for k, v in style.items():
+                if k in ('bold', 'italic', 'underline', 'glow'):
+                    if v is True:
+                        font_styles.append(k)
+            font_styles = ' '.join(font_styles)
+
+            defaults = self.view.style()
+            if not explicit_background and not style.get('background'):
+                style['background'] = defaults.get('background', '#FFFFFF')
+            if selected:
+                sfg = scope_style.get('selection_foreground', defaults.get('selection_foreground'))
+                if sfg != '#00000000':
+                    style['foreground'] = sfg
+                style['background'] = defaults.get('selection', '#0000FF')
+
+            fg, bg = self.tweak(style['foreground'], style['background'])
+            return SchemeColors(fg, bg, font_styles)
 
     def get_tools(self, tools, use_annotation, use_wrapping):
         """Get tools for toolbar."""
@@ -773,7 +840,7 @@ class ExportHtml(object):
                 else:
                     hl_done = True
 
-                color_match = self.csm.guess_color(
+                color_match = self.guess_style(
                     scope_name,
                     selected=not (hl_done and empty),
                     no_bold=self.no_bold,
@@ -791,7 +858,7 @@ class ExportHtml(object):
                     if self.curr_hl is not None and self.end == self.curr_hl.begin():
                         break
                     self.end += 1
-                color_match = self.csm.guess_color(
+                color_match = self.guess_style(
                     scope_name,
                     no_bold=self.no_bold,
                     no_italic=self.no_italic
@@ -841,7 +908,7 @@ class ExportHtml(object):
         # Get the color for the space at the end of a line
         if self.end < self.view.size():
             end_key = self.view.scope_name(self.pt)
-            color_match = self.csm.guess_color(
+            color_match = self.guess_style(
                 end_key,
                 no_bold=self.no_bold,
                 no_italic=self.no_italic

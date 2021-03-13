@@ -153,35 +153,5 @@
                 "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Grayscale.sublime-color-scheme"
             }
         }
-    ],
-
-    "bbcode_panel": [
-        {
-            "To Clipboard - Format as BBCode": {
-                "numbers": false,
-                "multi_select": true
-            }
-        },
-
-        {
-            "To Clipboard - Format as BBCode (show gutter)": {
-                "numbers": true,
-                "multi_select": true
-            }
-        },
-        {
-            "Sublime View - Show BBCode in View": {
-                "numbers": false,
-                "multi_select": true,
-                "view_open": true
-            }
-        },
-        {
-            "Sublime View - Show BBCode in View (show gutter)": {
-                "numbers": true,
-                "multi_select": true,
-                "view_open": true
-            }
-        }
     ]
 }

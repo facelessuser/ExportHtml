@@ -11,7 +11,7 @@ The BBCode variant will not open in an external browser, but it will copy the co
 Sublime Text view with the BBCode content.
 
 To get started, you can run the command `Export to HTML: Show Export Menu` and select an option from the default entries.  
-These entries are defined in the [settings file](sub://Packages/ExportHtml/ExportHtml.sublime-settings).  For BBCode, you can run the `Export to BBCode: Show Export Menu`.
+These entries are defined in the [settings file](sub://Packages/ExportHtml/ExportHtml.sublime-settings).
 
 HTML outputs have a toolbar in the upper right hand corner which should appear on hover.  You can do things like hide  
 line numbers, see a plain text output, initiate a print, etc.  It all depends on what the command has enabled.

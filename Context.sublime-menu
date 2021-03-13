@@ -4,8 +4,7 @@
         "caption": "Export",
         "children":
         [
-            { "command": "export_html_panel", "caption": "HTML" },
-            {"command": "export_bbcode_panel", "caption": "BBCode"}
+            { "command": "export_html_panel", "caption": "HTML" }
         ]
     },
     {

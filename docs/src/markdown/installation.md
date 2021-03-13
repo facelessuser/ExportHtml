@@ -2,11 +2,13 @@
 
 ## Package Control
 
-The recommended way to install ExportHtml is via [Package Control][package-control].  Package Control will install the correct branch on your system and keep it up to date.
+The recommended way to install ExportHtml is via [Package Control][package-control].  Package Control will install the
+correct branch on your system and keep it up to date.
 
 1. Ensure Package Control is installed.  Instructions are found [here][package-control-install].
 
-2. In Sublime Text, press ++ctrl+shift+p++ (Win, Linux) or ++cmd+shift+p++ (macOS) to bring up the quick panel.  It will show a list of installable plugins.
+2. In Sublime Text, press ++ctrl+shift+p++ (Win, Linux) or ++cmd+shift+p++ (macOS) to bring up the quick panel.  It will
+show a list of installable plugins.
 
 3. Start typing `ExportHtml`; when you see it, select it.
 
@@ -17,31 +19,38 @@ The recommended way to install ExportHtml is via [Package Control][package-contr
 ## Manual Installation
 
 !!! warning "Warning"
-    This is not the recommended way to install ExportHtml for the average user.  Installing this way **will not** get automatically updated.
+    This is not the recommended way to install ExportHtml for the average user.  Installing this way **will not** get
+    automatically updated.
 
-    If you are forking for a pull request, you should **just** clone ExportHtml and run Package Control's `Satisfy Dependency` command to get all the dependencies.
+    If you are forking for a pull request, you should **just** clone ExportHtml and run Package Control's
+    `Satisfy Dependency` command to get all the dependencies.
 
-For those who want to install ExportHtml without package control, here are the steps.  It understood that some people for what ever reason will prefer manually and may even have legitimate reasons to do so.  When going this route, you will have to keep all the packages updated yourself.
+For those who want to install ExportHtml without package control, here are the steps.  It understood that some people
+for what ever reason will prefer manually and may even have legitimate reasons to do so.  When going this route, you
+will have to keep all the packages updated yourself.
 
 ---
 
-1. Download the latest releases of the following dependencies and unpack or git clone in the `Packages` folder as shown below:
+1. Download the latest releases of the following dependencies and unpack or git clone in the `Packages` folder as shown
+   below:
 
     - @bitbucket:teddy_beer_maniac/sublime-text-dependency-markupsafe -> `markupsafe`
     - @bitbucket:teddy_beer_maniac/sublime-text-dependency-jinja2 -> `python-jinja2`
     - @packagecontrol/pygments -> `pygments`
     - @facelessuser/sublime-markdown-popups -> `mdpopups`
     - @facelessuser/sublime-markdown -> `python-markdown`
+    - @facelessuser/sublime-coloraide -> `coloraide`
 
 2. Download and unpack or git clone the latest ExportHtml release and unpack as `ExportHtml`:
 
     - @facelessuser/ExportHtml -> ExportHtml
 
-3. Create a folder under `Packages` called `00-dependencies` and under that folder create a file called `00-dependencies.py`:
+3. Create a folder under `Packages` called `00-dependencies` and under that folder create a file called
+   `00-dependencies.py`:
 
     Copy the following code to `00-dependencies.py` (this code was taken from Package Control):
 
-    ``` python
+    ```{.py3 .md-max-height}
     import sys
     import os
     from os.path import dirname
@@ -195,6 +204,7 @@ For those who want to install ExportHtml without package control, here are the s
     add_dependency('python-markdown')
     add_dependency('python-jinja2')
     add_dependency('mdpopups')
+    add_dependency('coloraide')
     ```
 
 4. Restart and enjoy.
@@ -203,7 +213,8 @@ For those who want to install ExportHtml without package control, here are the s
 
 1. Quit Sublime Text.
 
-2. Open a terminal and enter the following.  For dependencies replace the URL with the appropriate URL, and the appropriate folder to check it out to:
+2. Open a terminal and enter the following.  For dependencies replace the URL with the appropriate URL, and the
+   appropriate folder to check it out to:
 
     ```
     cd /path/to/Sublime Text 3/Packages

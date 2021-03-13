@@ -2,14 +2,15 @@
 
 ## Overview
 
-This is a fork of [Andrew Gibson][gibson]'s [PrintHtml][print-html] plugin.  This plugin allows the exporting of a document in Sublime Text to a HTML file or to BBCode.  It duplicates Sublime's theme colors and font styles.
+This is a fork of [Andrew Gibson][gibson]'s [PrintHtml][print-html] plugin.  This plugin allows the exporting of a
+document in Sublime Text to a HTML file.  It duplicates Sublime's theme colors and font styles.
 
 ![preview](images/preview.png)
 
 ## Features
 
 - Export to HTML using any `tmTheme` or `sublime-color-scheme` for syntax highlighting.
-- Can handle any language supported by ST2.
+- Can handle any language supported by ST3+.
 - Supports bold and italic theme font styles as well.
 - Configurable output.
 - Format suitable for copying and pasting in emails.
@@ -23,7 +24,8 @@ This is a fork of [Andrew Gibson][gibson]'s [PrintHtml][print-html] plugin.  Thi
 
 ## Credits
 
-- [Andrew Gibson][gibson]: Original idea and base code for converting Sublime view to HTML and allowing me to build off it to make ExportHtml.
+- [Andrew Gibson][gibson]: Original idea and base code for converting Sublime view to HTML and allowing me to build off
+  it to make ExportHtml.
 - Print-Color and Print-Grayscale `sublime-color-scheme` files were derived from Monokai Bright.
 
 --8<-- "refs.md"

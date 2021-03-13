@@ -197,7 +197,7 @@ class ColorMod:
                         if color2 is None:
                             raise ValueError("Found unterminated or invalid 'color('")
                         color = color2.convert("srgb")
-                        if not color.is_hue_null("hsl"):
+                        if not color.is_nan("hsl.hue"):
                             hue = color.get("hsl.hue")
                 if color is None:
                     obj = Color.match(string, start=start, fullmatch=False)
@@ -205,7 +205,7 @@ class ColorMod:
                         color = obj.color
                         if color.space != "srgb":
                             color = color.convert("srgb")
-                        if not color.is_hue_null("hsl"):
+                        if not color.is_nan("hsl.hue"):
                             hue = color.get("hsl.hue")
                         start = obj.end
 
@@ -302,7 +302,7 @@ class ColorMod:
         value = float(value.strip('%'))
         op = m.group(1).strip() if m.group(1) else ""
         getattr(self, name)(value, op=op, hue=hue)
-        if not self._color.is_hue_null("hsl"):
+        if not self._color.is_nan("hsl.hue"):
             hue = self._color.get("hsl.hue")
         return m.end(0), hue
 
@@ -338,7 +338,7 @@ class ColorMod:
 
         value = util.clamp(value, 0.0, 1.0)
         self.blend(color2, 1.0 - value, alpha, space=space)
-        if not self._color.is_hue_null("hsl"):
+        if not self._color.is_nan("hsl.hue"):
             hue = self._color.get("hsl.hue")
         return start, hue
 
@@ -371,7 +371,7 @@ class ColorMod:
 
         self.min_contrast(this, color2, value)
         self._color.update(this)
-        if not self._color.is_hue_null("hsl"):
+        if not self._color.is_nan("hsl.hue"):
             hue = self._color.get("hsl.hue")
         return start, hue
 
@@ -406,6 +406,7 @@ class ColorMod:
             secondary = "whiteness"
             min_mix = orig.blackness
             max_mix = 100.0
+        orig_ratio = ratio
         last_ratio = 0
         last_mix = 0
         last_other = 0
@@ -434,6 +435,10 @@ class ColorMod:
                 last_mix = mid_mix
                 last_other = mid_other
 
+        # Can't find a better color
+        if last_ratio < ratio and orig_ratio > last_ratio:
+            return
+
         # Use the best, last values
         final = orig.new("hwb", [orig.hue, last_mix, last_other] if is_dark else [orig.hue, last_other, last_mix])
         final = final.convert('srgb')
@@ -455,9 +460,7 @@ class ColorMod:
         this = self._color.convert(space) if self._color.space() != space else self._color
 
         if color.space() != space:
-            hue = color.hue
-            color = color.convert(space)
-            color.hue = hue
+            color.convert(space, in_place=True)
 
         new_color = this.mix(color, percent, space=space)
         if not alpha:
@@ -476,7 +479,7 @@ class ColorMod:
         """Lightness."""
 
         this = self._color.convert("hsl") if self._color.space() != "hsl" else self._color
-        if this.is_hue_null() and hue is not None:
+        if this.is_nan('hue') and hue is not None:
             this.hue = hue
         op = self.OP_MAP.get(op, self._op_null)
         this.lightness = op(this.lightness, value)
@@ -486,7 +489,7 @@ class ColorMod:
         """Saturation."""
 
         this = self._color.convert("hsl") if self._color.space() != "hsl" else self._color
-        if this.is_hue_null() and hue is not None:
+        if this.is_nan("hue") and hue is not None:
             this.hue = hue
         op = self.OP_MAP.get(op, self._op_null)
         this.saturation = op(this.saturation, value)
@@ -501,23 +504,22 @@ class Color(ColorCSS):
 
         super().__init__(color, data, alpha, filters=None, variables=variables, **kwargs)
 
-    @classmethod
-    def _parse(cls, color, data=None, alpha=util.DEF_ALPHA, filters=None, variables=None, **kwargs):
+    def _parse(self, color, data=None, alpha=util.DEF_ALPHA, filters=None, variables=None, **kwargs):
         """Parse the color."""
 
         obj = None
         if data is not None:
             filters = set(filters) if filters is not None else set()
-            for space, space_class in cls.CS_MAP.items():
+            for space, space_class in self.CS_MAP.items():
                 s = color.lower()
                 if space == s and (not filters or s in filters):
                     obj = space_class(data[:space_class.NUM_COLOR_CHANNELS] + [alpha])
                     return obj
         elif isinstance(color, ColorCSS):
             if not filters or color.space() in filters:
-                obj = cls.CS_MAP[color.space()](color._color)
+                obj = self.CS_MAP[color.space()](color._color)
         else:
-            m = cls._match(color, fullmatch=True, filters=filters, variables=variables)
+            m = self._match(color, fullmatch=True, filters=filters, variables=variables)
             if m is None:
                 raise ValueError("'{}' is not a valid color".format(color))
             obj = m.color

@@ -2,9 +2,11 @@
 
 ## Exporting HTML
 
-ExportHtml comes with a number of default commands available, but these can be overridden in the settings file.  You can also create commands directly outside of the settings file bound to the command palette, key bindings, or even the menu.
+ExportHtml comes with a number of default commands available, but these can be overridden in the settings file.  You can
+also create commands directly outside of the settings file bound to the command palette, key bindings, or even the menu.
 
-If adding a command to the settings file, it goes under the `html_panel` setting.  These configurations will appear under the `Export to HTML: Show Export Menu` command palette command.
+If adding a command to the settings file, it goes under the `html_panel` setting.  These configurations will appear
+under the `Export to HTML: Show Export Menu` command palette command.
 
 ```javascript
 // Define configurations for the drop down export menu
@@ -23,7 +25,8 @@ If adding a command to the settings file, it goes under the `html_panel` setting
  ]
 ```
 
-The name of the command is the key value, and then you add the parameters you wish to specify.  You can use any combination of settings below.
+The name of the command is the key value, and then you add the parameters you wish to specify.  You can use any
+combination of settings below.
 
 Parameter              | Type               | Description
 ---------------------- | ------------------ | -----------
@@ -66,60 +69,19 @@ Example:
 }
 ```
 
-When viewing the HTML in your web browser, regardless of the gutter settings, the gutter can be toggled to show or be hidden using the toolbar in the upper right corner of the page.
-
-## Exporting BBCode
-
-ExportHtml can also export selected code as BBCode for posting in forums. Exporting BBCode is very similar to exporting HTML code.  But keep in mind, not all forums have all the BBCode support needed to view ExportHtml's BBCode format, so your mileage may vary.
-
-If adding a command to the settings file, it goes under the `bbcode_panel` setting.  These configurations will appear under the `Export to BBCode: Show Export Menu` command palette command.
-
-```js
-// Define configurations for the drop down export menu
-"bbcode_panel": [
-    {
-        "To Clipboard - Format as BBCode": {
-            "numbers": false,
-            "multi_select": true
-        }
-    }
-]
-```
-
-The name of the command is the key value, and then you add the parameters you wish to specify.  You can use any combination of settings below.
-
-Parameter           | Type    | Description
-------------------- | ------- | -----------
-`numbers`           | boolean | Display line numbers in the gutter.
-`multi_select`      | boolean | If multiple regions are selected in a document, only export what is under those selections. By default only the first selection is recognized.  Default is `false`.
-`ignore_selections` | boolean | Ignores selections in the view.  If this is set, `multi_select` will be treated as `false` regardless of its actual value.
-`color_scheme`      | string  | The color scheme (tmTheme) file you would like to use.  By default the current color scheme file is used, or the the alternate default color scheme if defined in the setting `alternate_scheme`.
-`clipboard_copy`    | boolean | Copy BBCode to the clipboard after generation. Default is `true`.
-`view_open`         | boolean | Open text file of BBCode in a Sublime Text tab.  Default is `false`.
-`no_header`         | boolean | Do not display file name, date, and time at the top of the HTML document. Default is `false`.
-
-If you wish to bind a command to a key combination etc., the same settings as above can be used.
-
-Example:
-
-```js
-{
-    "keys": ["ctrl+alt+n"],
-    "command": "export_bbcode",
-    "args": {
-        "numbers": false,
-        "multi_select": true
-    }
-}
-```
+When viewing the HTML in your web browser, regardless of the gutter settings, the gutter can be toggled to show or be
+hidden using the toolbar in the upper right corner of the page.
 
 ## Annotations (HTML only)
 
-Annotations are comments you can make on selected text.  When the HTML is generated, the selected text will be underlined, and when the mouse hovers over them, a tooltip will appear with your comment.
+Annotations are comments you can make on selected text.  When the HTML is generated, the selected text will be
+underlined, and when the mouse hovers over them, a tooltip will appear with your comment.
 
 ![annotation_preview](images/annotation_preview.png)
 
-In order to use annotations, you must enter into an "Annotation Mode".  This puts your file in a read only state.  At this point, you can select text and create annotations using the annotation commands provided.  When you leave the "Annotation Mode", all annotations will be lost.  So you must export before leaving annotation mode.
+In order to use annotations, you must enter into an "Annotation Mode".  This puts your file in a read only state.  At
+this point, you can select text and create annotations using the annotation commands provided.  When you leave the
+"Annotation Mode", all annotations will be lost.  So you must export before leaving annotation mode.
 
 You can access the annotation commands from the command palette or from the context menu.
 
@@ -134,7 +96,9 @@ Delete Annotation(s)    | Delete the annotation region the the cursor resides in
 Delete All Annotations  | Delete all annotation regions.
 Show Annotation Comment | Show the annotation comment of the region under the cursor.
 
-You can navigate the annotations in the generated HTML by using a jump table.  You can show the jump table at any time by selecting the annotation button in the toolbar.  You can also click any annotation to show the jump table as well.  If it gets in the way, you can dock it in a different location.
+You can navigate the annotations in the generated HTML by using a jump table.  You can show the jump table at any time
+by selecting the annotation button in the toolbar.  You can also click any annotation to show the jump table as well. If
+it gets in the way, you can dock it in a different location.
 
 ![annotation_table_preview](images/annotation_table_preview.png)
 
@@ -147,6 +111,5 @@ Parameter              | Type                | Description
 `alternate_font_face`  | string\ or\ false   | Define an alternate font_face to use by default instead of the current one in use.  Use the current one in use if set to a literal `false`.  Default is `false`.
 `valid_selection_size` | integer             | Minimum allowable size for a selection to be accepted for only the selection to be printed.
 `html_panel`           | array\ of\ commands | Define export configurations to appear under the `Export to HTML: Show Export Menu` command palette command.
-`bbcode_panel`         | array\ of\ commands | Define export configurations to appear under the `Export to BBCode: Show Export Menu` command palette command.
 
 --8<-- "refs.md"

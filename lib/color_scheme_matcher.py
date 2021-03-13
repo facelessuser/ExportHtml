@@ -77,8 +77,7 @@ class SchemeColors(
         [
             'fg', 'fg_simulated', 'bg', "bg_simulated", "style", "color_gradient",
             "fg_selector", "bg_selector", "style_selectors", "color_gradient_selector"
-        ],
-        verbose=False
+        ]
     )
 ):
     """Scheme colors."""
@@ -260,29 +259,41 @@ class ColorSchemeMatcher(object):
                 color = item.get('foreground', None)
                 if isinstance(color, list):
                     # Hashed Syntax Highlighting
-                    for index, c in enumerate(color):
-                        color[index] = Color(
-                            c.strip(), variables=self.variables
-                        ).convert("srgb").to_string(**HEX)
+                    try:
+                        for index, c in enumerate(color):
+                            color[index] = Color(
+                                c.strip(), variables=self.variables
+                            ).convert("srgb").to_string(**HEX)
+                    except Exception:
+                        item['foreground'] = "none"
                 elif isinstance(color, str):
-                    item['foreground'] = Color(
-                        color.strip(), variables=self.variables
-                    ).convert("srgb").to_string(**HEX)
+                    try:
+                        item['foreground'] = Color(
+                            color.strip(), variables=self.variables
+                        ).convert("srgb").to_string(**HEX)
+                    except Exception:
+                        item['foreground'] = "none"
                 # Background color
                 bgcolor = item.get('background', None)
                 if isinstance(bgcolor, str):
-                    item['background'] = Color(
-                        bgcolor.strip(), variables=self.variables
-                    ).convert("srgb").to_string(**HEX)
-                    fgadj = item.get('foreground_adjust', None)
-                    if isinstance(fgadj, str) and fgadj:
-                        item['foreground_adjust'] = fgadj
+                    try:
+                        item['background'] = Color(
+                            bgcolor.strip(), variables=self.variables
+                        ).convert("srgb").to_string(**HEX)
+                        fgadj = item.get('foreground_adjust', None)
+                        if isinstance(fgadj, str) and fgadj:
+                            item['foreground_adjust'] = fgadj
+                    except Exception:
+                        pass
                 # Selection foreground color
                 scolor = item.get('selection_foreground', None)
                 if isinstance(scolor, str):
-                    item['selection_foreground'] = Color(
-                        scolor.strip(), variables=self.variables
-                    ).convert("srgb").to_string(**HEX)
+                    try:
+                        item['selection_foreground'] = Color(
+                            scolor.strip(), variables=self.variables
+                        ).convert("srgb").to_string(**HEX)
+                    except Exception:
+                        pass
 
     def setup_matcher(self):
         """Setup colors for color matcher."""
@@ -351,7 +362,10 @@ class ColorSchemeMatcher(object):
         if isinstance(color, list):
             fg, fg_sim, color_gradient = self.process_color_gradient(color)
         elif color is not None:
-            fg, fg_sim = self.process_color(color)
+            if color == "none":
+                fg, fg_sim = color, None
+            else:
+                fg, fg_sim = self.process_color(color)
         else:
             fg, fg_sim = None, None
         if bgcolor is not None:
@@ -359,9 +373,12 @@ class ColorSchemeMatcher(object):
         else:
             bg, bg_sim = None, None
         if scolor is not None:
-            sfg, sfg_sim = self.process_color(
-                scolor, bground=self.special_colors["selection"]['color_simulated']
-            )
+            if scolor == "none":
+                sfg, sfg_sim = scolor, None
+            else:
+                sfg, sfg_sim = self.process_color(
+                    scolor, bground=self.special_colors["selection"]['color_simulated']
+                )
         else:
             sfg, sfg_sim = None, None
         self.colors[scope] = {
@@ -517,10 +534,14 @@ class ColorSchemeMatcher(object):
                 ):
                     best_match_fg = match
                     color = self.colors[key]["color"]
-                    color_sim = self.colors[key]["color_simulated"]
+                    if color == "none":
+                        color = self.special_colors['foreground']['color']
+                        color_sim = self.special_colors['foreground']['color_simulated']
+                    else:
+                        color_sim = self.colors[key]["color_simulated"]
                     color_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
-                if (
-                    self.colors[key]["color"] is not None and
+                elif (
+                    self.colors[key]["color_gradient"] is not None and
                     match > best_match_fg_gradient
                 ):
                     best_match_fg_gradient = match
@@ -529,7 +550,11 @@ class ColorSchemeMatcher(object):
                 if self.colors[key]["selection_color"] is not None and match > best_match_sfg:
                     best_match_sfg = match
                     scolor = self.colors[key]["selection_color"]
-                    scolor_sim = self.colors[key]["selection_color_simulated"]
+                    if color == "none":
+                        scolor = self.special_colors['selection_foreground']['color']
+                        scolor_sim = self.special_colors['selection_foreground']['color_simulated']
+                    else:
+                        scolor_sim = self.colors[key]["selection_color_simulated"]
                     scolor_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
                 if self.colors[key]["style"] is not None and match > best_match_style:
                     best_match_style = match
@@ -556,8 +581,8 @@ class ColorSchemeMatcher(object):
                     best_match_bg = match
                     bgcolor = self.colors[key]["bgcolor"]
                     bgcolor_sim = self.colors[key]["bgcolor_simulated"]
-                    bg_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
                     fgadj = self.colors[key]["foreground_adjust"]
+                    bg_selector = SchemeSelectors(self.colors[key]["name"], self.colors[key]["scope"])
 
             if len(style) == 0:
                 style = ""

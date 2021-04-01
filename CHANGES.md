@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.17.2
+
+- **FIX**: Fix a regression where custom defined schemes are not used.
+
 ## 2.17.1
 
 - **FIX**: Fix issues with Sublime 4095 `auto` light/dark color scheme option (legacy converter).

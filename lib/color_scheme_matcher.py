@@ -418,7 +418,7 @@ class ColorSchemeMatcher(object):
             if not simple_strip:
                 if bground is None:
                     bground = self.special_colors['background']['color_simulated']
-                rgb.overlay(Color(bground if bground != "" else "#FFFFFF"))
+                rgb.compose(Color(bground if bground != "" else "#FFFFFF"))
 
             gradient.append((color, rgb.to_string(**HEX)))
         if gradient:
@@ -446,7 +446,7 @@ class ColorSchemeMatcher(object):
         if not simple_strip:
             if bground is None:
                 bground = self.special_colors['background']['color_simulated']
-            rgb.overlay(Color(bground if bground != "" else "#FFFFFF"))
+            rgb.compose(Color(bground if bground != "" else "#FFFFFF"))
 
         return color, rgb.to_string(**HEX)
 
@@ -481,7 +481,7 @@ class ColorSchemeMatcher(object):
 
         This was originally introduced for mdpopups so that it would
         know when a background was not needed.  This allowed mdpopups
-        to generate syntax highlighted code that could be overlayed on
+        to generate syntax highlighted code that could be overlaid on
         block elements with different background colors and allow that
         background would show through.
         """

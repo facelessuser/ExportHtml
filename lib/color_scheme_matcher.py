@@ -481,7 +481,7 @@ class ColorSchemeMatcher(object):
 
         This was originally introduced for mdpopups so that it would
         know when a background was not needed.  This allowed mdpopups
-        to generate syntax highlighted code that could be overlayed on
+        to generate syntax highlighted code that could be overlaid on
         block elements with different background colors and allow that
         background would show through.
         """

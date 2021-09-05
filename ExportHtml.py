@@ -469,7 +469,7 @@ class ExportHtml(object):
         self.switch = False
         self.save_to_view = False
         self.view_scheme = view_scheme
-        if alt_scheme != view_scheme:
+        if isinstance(alt_scheme, str) and alt_scheme != view_scheme:
             switch = True
             if view_scheme != default.get('color_scheme'):
                 self.save_to_view = True

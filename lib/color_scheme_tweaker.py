@@ -307,7 +307,7 @@ class ColorTweaker(object):
                 (bg is None or bg.strip() == "" or bg == "none")
             ):
                 rgba = Color(rgba_fg)
-                rgba.overlay(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
+                rgba.compose(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
                 bg = rgba.to_string(hex=True, alpha=False) + ("%02X" % int((255.0 * value)))
                 try:
                     rgba_bg = Color(bg)
@@ -431,7 +431,7 @@ class ColorSchemeTweaker(object):
                 (bg is None or bg.strip() == "" or bg == "none")
             ):
                 rgba = Color(rgba_fg)
-                rgba.overlay(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
+                rgba.compose(self.bground if self.bground != "" else "#FFFFFF", in_place=True)
                 bg = rgba.to_string(hex=True, alpha=False) + ("%02X" % int((255.0 * value)))
                 try:
                     rgba_bg = Color(bg)

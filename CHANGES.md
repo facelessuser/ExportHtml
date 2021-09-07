@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.17.5
+
+- **FIX**: Remove unnecessary dependencies.
+
 ## 2.17.4
 
 - **FIX**: Fix `jinja2` import error.

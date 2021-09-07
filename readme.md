@@ -28,7 +28,7 @@ colors and font styles.
 
 # Documentation
 
-https://facelessuser.github.com/ExportHtml
+https://facelessuser.github.io/ExportHtml
 
 # Credits
 

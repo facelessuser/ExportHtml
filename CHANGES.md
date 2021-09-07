@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.17.4
+
+- **FIX**: Fix `jinja2` import error.
+
 ## 2.17.3
 
 - **FIX**: Fix a scheme loading related issue.

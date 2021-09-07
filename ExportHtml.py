@@ -33,7 +33,7 @@ from .lib.browser import open_in_browser
 from .lib.color_scheme_matcher import ColorSchemeMatcher
 from .lib.color_scheme_tweaker import ColorSchemeTweaker, ColorTweaker
 from .lib.notify import notify
-import jinja2
+from mdpopups import jinja2
 from collections import namedtuple
 
 AUTO = int(sublime.version()) >= 4095

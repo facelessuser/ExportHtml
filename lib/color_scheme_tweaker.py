@@ -6,7 +6,7 @@ Copyright (c) 2013 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import absolute_import
 import sublime
-from .st_colormod import Color
+from mdpopups.st_colormod import Color
 from mdpopups.coloraide import algebra as alg
 import re
 
@@ -376,7 +376,7 @@ class ColorTweaker(object):
 
         filters = []
         for f in self.filters:
-            if f[0] in ("invert", "grayscale", "sepia"):
+            if f[0] in ("invert", "grayscale", "sepia", "tritan", "protan", "deutan"):
                 filters.append(f[0])
             elif f[0] in ("hue", "colorize"):
                 filters.append(f[0] + "(%d)" % int(f[1]))
@@ -434,7 +434,7 @@ class ColorSchemeTweaker(object):
             name = f[0]
             value = f[1]
             context = f[2]
-            if name in ("grayscale", "sepia", "invert"):
+            if name in ("grayscale", "sepia", "invert", "tritan", "protan", "deutan"):
                 if context != "bg":
                     self._apply_filter(rgba_fg, name)
                 if context != "fg":
@@ -534,7 +534,7 @@ class ColorSchemeTweaker(object):
 
         filters = []
         for f in self.filters:
-            if f[0] in ("invert", "grayscale", "sepia"):
+            if f[0] in ("invert", "grayscale", "sepia", "tritan", "protan", "deutan"):
                 filters.append(f[0])
             elif f[0] in ("hue", "colorize"):
                 filters.append(f[0] + "(%d)" % int(f[1]))

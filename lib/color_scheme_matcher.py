@@ -28,8 +28,8 @@ import sublime
 import codecs
 import re
 from .file_strip.json import sanitize_json
-from .st_colormod import Color
 from .tmtheme import ColorSRGBX11
+from mdpopups.st_colormod import Color
 from os import path
 from collections import namedtuple
 from plistlib import readPlistFromBytes

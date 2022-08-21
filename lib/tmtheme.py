@@ -1,12 +1,21 @@
 """Custom color that looks for colors of format `#RRGGBBAA` as `#AARRGGBB`."""
 from mdpopups.coloraide import Color
-from mdpopups.coloraide.spaces.srgb.css import SRGB
-from mdpopups.coloraide.spaces import _parse
-from mdpopups.coloraide import util
-import copy
+from mdpopups.coloraide.spaces.srgb.css import sRGB
+from mdpopups.coloraide.css import parse, serialize
 import re
 
-RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.format(**_parse.COLOR_PARTS))
+RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.format(**parse.COLOR_PARTS))
+
+MATCH = re.compile(
+    r"""(?xi)
+    (?:
+        # Hex syntax
+        \#(?:{hex}{{6}}(?:{hex}{{2}})?|{hex}{{3}}(?:{hex})?)\b |
+        # Names
+        \b(?<!\#)[a-z][a-z0-9]{{2,}}(?!\()\b
+    )
+    """.format(**parse.COLOR_PARTS)
+)
 
 name2hex_map = {
     "black": "#000000",
@@ -681,60 +690,31 @@ def name2hex(name):
     return name2hex_map.get(name.lower(), None)
 
 
-class SRGBX11(SRGB):
+class SRGBX11(sRGB):
     """sRGB class."""
 
-    MATCH = re.compile(
-        r"""(?xi)
-        (?:
-            # Hex syntax
-            \#(?:{hex}{{6}}(?:{hex}{{2}})?|{hex}{{3}}(?:{hex})?)\b |
-            # Names
-            \b(?<!\#)[a-z]{{3,}}(?!\()\b
-        )
-        """.format(**_parse.COLOR_PARTS)
-    )
-
+    @classmethod
     def to_string(
-        self, parent, *, alpha=None, precision=None, fit=True, **kwargs
+        cls, parent, *, alpha=None, precision=None, fit=True, none=False, **kwargs
     ):
         """Convert to CSS."""
 
-        options = kwargs
-
-        value = ''
-        a = util.no_nan(self.alpha)
-        alpha = alpha is not False and (alpha is True or a < 1.0)
-        hex_upper = options.get("upper", False)
-        compress = options.get("compress", False)
-        method = None if not isinstance(fit, str) else fit
-        coords = util.no_nan(parent.fit(method=method).coords())
-
-        template = "#{:02x}{:02x}{:02x}{:02x}" if alpha else "#{:02x}{:02x}{:02x}"
-        if hex_upper:
-            template = template.upper()
-
-        if alpha:
-            h = template.format(
-                int(util.round_half_up(coords[0] * 255.0)),
-                int(util.round_half_up(coords[1] * 255.0)),
-                int(util.round_half_up(coords[2] * 255.0)),
-                int(util.round_half_up(util.no_nan(self.alpha) * 255.0))
-            )
-        else:
-            h = template.format(
-                int(util.round_half_up(coords[0] * 255.0)),
-                int(util.round_half_up(coords[1] * 255.0)),
-                int(util.round_half_up(coords[2] * 255.0))
-            )
+        h = serialize.serialize_css(
+            parent,
+            alpha=alpha,
+            precision=precision,
+            fit=fit,
+            hexa=True,
+            upper=kwargs.get('upper', False)
+        )
 
         value = h
-        if compress:
+        if kwargs.get('compress', False):
             m = RE_COMPRESS.match(value)
             if m:
                 value = m.expand(r"#\1\2\3\4") if alpha else m.expand(r"#\1\2\3")
 
-        if options.get("names"):
+        if kwargs.get("names"):
             length = len(h) - 1
             index = int(length / 4)
             if length in (8, 4) and h[-index:].lower() == ("f" * index):
@@ -746,54 +726,21 @@ class SRGBX11(SRGB):
         return value
 
     @classmethod
-    def translate_channel(cls, channel, value):
-        """Translate channel string."""
-
-        if channel in (-1, 0, 1, 2):
-            return _parse.norm_hex_channel(value)
-
-    @classmethod
-    def split_channels(cls, color):
-        """Split channels."""
-
-        m = cls.HEX_MATCH.match(color)
-        assert m is not None
-        if m.group(1):
-            return cls.null_adjust(
-                (
-                    cls.translate_channel(0, "#" + color[1:3]),
-                    cls.translate_channel(1, "#" + color[3:5]),
-                    cls.translate_channel(2, "#" + color[5:7])
-                ),
-                cls.translate_channel(-1, "#" + m.group(2)) if m.group(2) else 1.0
-            )
-        else:
-            return cls.null_adjust(
-                (
-                    cls.translate_channel(0, "#" + color[1] * 2),
-                    cls.translate_channel(1, "#" + color[2] * 2),
-                    cls.translate_channel(2, "#" + color[3] * 2)
-                ),
-                cls.translate_channel(-1, "#" + m.group(4) * 2) if m.group(4) else 1.0
-            )
-
-    @classmethod
     def match(cls, string, start=0, fullmatch=True):
         """Match a CSS color string."""
 
-        m = cls.MATCH.match(string, start)
+        m = MATCH.match(string, start)
         if m is not None and (not fullmatch or m.end(0) == len(string)):
-            if string[start:start + 1] != "#":
-                string = name2hex(string[m.start(0):m.end(0)])
-                if string is not None:
-                    return cls.split_channels(string), m.end(0)
-            else:
-                return cls.split_channels(string[m.start(0):m.end(0)]), m.end(0)
-        return None, None
+            string = string[m.start(0):m.end(0)].lower()
+            if not string.startswith("#"):
+                string = name2hex(string)
+            if string is not None:
+                return parse.parse_hex(string), m.end(0)
+        return None
 
 
 class ColorSRGBX11(Color):
     """Hex SRGB with X11 color names."""
 
-    CS_MAP = copy.copy(Color.CS_MAP)
-    CS_MAP["srgb"] = SRGBX11
+
+ColorSRGBX11.register(SRGBX11(), overwrite=True)

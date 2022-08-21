@@ -2,6 +2,8 @@
 
 ## 2.17.5
 
+- **NEW**: New colorblind filters.
+- **CHORE**: Updates to support newer dependencies.
 - **FIX**: Remove unnecessary dependencies.
 - **FIX**: Fix typo in settings configuration.
 

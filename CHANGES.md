@@ -1,6 +1,6 @@
 # ExportHtml
 
-## 2.17.5
+## 2.18.0
 
 - **NEW**: New colorblind filters.
 - **CHORE**: Updates to support newer dependencies.

@@ -278,12 +278,12 @@ class ColorTweaker(object):
             return None, None
 
         try:
-            assert(fg is not None)
+            assert fg is not None
             rgba_fg = Color(fg)
         except Exception:
             rgba_fg = fg
         try:
-            assert(bg is not None)
+            assert bg is not None
             rgba_bg = Color(bg)
         except Exception:
             rgba_bg = bg
@@ -402,12 +402,12 @@ class ColorSchemeTweaker(object):
             return None, None
 
         try:
-            assert(fg is not None)
+            assert fg is not None
             rgba_fg = Color(fg)
         except Exception:
             rgba_fg = fg
         try:
-            assert(bg is not None)
+            assert bg is not None
             rgba_bg = Color(bg)
         except Exception:
             rgba_bg = bg

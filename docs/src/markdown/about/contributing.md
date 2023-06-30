@@ -9,11 +9,11 @@ ST3               | Fully supported and actively maintained.
 
 Contribution from the community is encouraged and can be done in a variety of ways:
 
-- Become a sponsor.
-- Bug reports.
-- Reviewing code.
-- Code patches via pull requests.
-- Documentation improvements via pull requests.
+-   Become a sponsor.
+-   Bug reports.
+-   Reviewing code.
+-   Code patches via pull requests.
+-   Documentation improvements via pull requests.
 
 ## Become a Sponsor :octicons-heart-fill-16:{: .heart-throb}
 
@@ -25,26 +25,26 @@ any tier you feel comfortable with. No amount is too little. We also accept one 
 
 ## Bug Reports
 
-1. Please **read the documentation** and **search the issue tracker** to try to find the answer to your question
-   **before** posting an issue.
+1.  Please **read the documentation** and **search the issue tracker** to try to find the answer to your question
+    **before** posting an issue.
 
-2. When an issue is created, a [template][template] will be shown, please fill out the appropriate sections. If the
-   template is not followed, the issue will be marked `Invalid` and closed.
+2.  When an issue is created, a [template][template] will be shown, please fill out the appropriate sections. If the
+    template is not followed, the issue will be marked `Invalid` and closed.
 
-3. When creating an issue on the repository, please provide as much info as possible:
+3.  When creating an issue on the repository, please provide as much info as possible:
 
-    - Provide environment information by running `Preferences->Package Settings->ExportHtml->Support Info`.  The
-      information will be copied to the clipboard; paste the info in issue.
-    - Errors in console.
-    - Detailed description of the problem.
-    - Examples for reproducing the error.  You can post pictures, but if specific text or code is required to reproduce
-      the issue, please provide the text in a plain text format for easy copy/paste.
-    - Provide links to 3rd party color scheme package you are using if applicable.
+    -   Provide environment information by running `Preferences->Package Settings->ExportHtml->Support Info`.  The
+        information will be copied to the clipboard; paste the info in issue.
+    -   Errors in console.
+    -   Detailed description of the problem.
+    -   Examples for reproducing the error.  You can post pictures, but if specific text or code is required to
+        reproduce the issue, please provide the text in a plain text format for easy copy/paste.
+    -   Provide links to 3rd party color scheme package you are using if applicable.
 
     The more info provided the greater the chance someone will take the time to answer, implement, or fix the issue.
 
-4. Be prepared to answer questions and provide additional information if required.  Issues in which the creator refuses
-   to respond to follow up questions will be marked as stale and closed.
+4.  Be prepared to answer questions and provide additional information if required.  Issues in which the creator refuses
+    to respond to follow up questions will be marked as stale and closed.
 
 ## Reviewing Code
 
@@ -63,20 +63,21 @@ it is strongly suggested that requesters make an effort to verify before request
 
 ### Running Validation Tests
 
-!!! tip "Tip"
-    If you are running Sublime on a macOS or Linux/Unix system, you run all tests by by running the shell script
-    (assuming you have installed your environment fulfills all requirements below):
+/// tip | Tip
+If you are running Sublime on a macOS or Linux/Unix system, you run all tests by by running the shell script
+(assuming you have installed your environment fulfills all requirements below):
 
-    ```
-    chmod +x run_tests.sh
-    ./run_tests.sh
-    ```
+```
+chmod +x run_tests.sh
+./run_tests.sh
+```
+///
 
 There are a couple of dependencies that must be present before running the tests.
 
-1. As ST3 is the only current, actively supported version, Python 3.3 must be used to validate the tests.
+1.  As ST3 is the only current, actively supported version, Python 3.3 must be used to validate the tests.
 
-2. Unit tests are run with pytest (@pytest-dev/pytest).  You can install `pytest` via:
+2.  Unit tests are run with pytest (@pytest-dev/pytest).  You can install `pytest` via:
 
     ```
     pip install pytest
@@ -88,13 +89,13 @@ There are a couple of dependencies that must be present before running the tests
     py.test .
     ```
 
-3. Linting is performed on the entire project with the following modules:
+3.  Linting is performed on the entire project with the following modules:
 
-    - @gitlab:pycqa/flake8
-    - @gitlab:pycqa/flake8-docstrings
-    - @ebeweber/flake8-mutable
-    - @gforcada/flake8-builtins
-    - @gitlab:pycqa/pep8-naming
+    -   @gitlab:pycqa/flake8
+    -   @gitlab:pycqa/flake8-docstrings
+    -   @ebeweber/flake8-mutable
+    -   @gforcada/flake8-builtins
+    -   @gitlab:pycqa/pep8-naming
 
     These can be installed via:
 
@@ -112,12 +113,12 @@ There are a couple of dependencies that must be present before running the tests
     flake8 .
     ```
 
-4. JavaScript files are linted with the `jshint` module for `nodejs`.
+4.  JavaScript files are linted with the `jshint` module for `nodejs`.
 
-    - `nodejs` can be downloaded and installed from https://nodejs.org.
-    - `jshint` can be installed with node's package manager called `npm`. This example will illustrate how to install
-      and use `jshint` globally.  If you don't want to do it globally and know how to do it locally, feel free to that
-      as well.
+    -   `nodejs` can be downloaded and installed from https://nodejs.org.
+    -   `jshint` can be installed with node's package manager called `npm`. This example will illustrate how to install
+        and use `jshint` globally.  If you don't want to do it globally and know how to do it locally, feel free to that
+        as well.
 
         Install.
 

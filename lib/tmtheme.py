@@ -757,7 +757,7 @@ class SRGBX11(SRGB):
         """Split channels."""
 
         m = cls.HEX_MATCH.match(color)
-        assert(m is not None)
+        assert m is not None
         if m.group(1):
             return cls.null_adjust(
                 (

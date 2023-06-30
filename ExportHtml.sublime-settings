@@ -50,7 +50,7 @@
                 "multi_select": true,
                 "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Color.sublime-color-scheme",
                 "style_gutter": false,
-                "diable_nbsp": true
+                "disable_nbsp": true
             }
         },
 
@@ -63,7 +63,7 @@
                 "multi_select": true,
                 "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Grayscale.sublime-color-scheme",
                 "style_gutter": false,
-                "diable_nbsp": true
+                "disable_nbsp": true
             }
         },
 
@@ -78,7 +78,7 @@
                 "highlight_selections": true,
                 "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Color.sublime-color-scheme",
                 "style_gutter": false,
-                "diable_nbsp": true
+                "disable_nbsp": true
             }
         },
 
@@ -93,7 +93,7 @@
                 "highlight_selections": true,
                 "color_scheme": "Packages/ExportHtml/ColorSchemes/Print Grayscale.sublime-color-scheme",
                 "style_gutter": false,
-                "diable_nbsp": true
+                "disable_nbsp": true
             }
         },
         // Browser view color (selections and multi-selections allowed)

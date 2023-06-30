@@ -3,6 +3,7 @@
 ## 2.17.5
 
 - **FIX**: Remove unnecessary dependencies.
+- **FIX**: Fix typo in settings configuration.
 
 ## 2.17.4
 

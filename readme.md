@@ -1,6 +1,4 @@
 [![Donate via PayPal][donate-image]][donate-link]
-[![Discord][discord-image]][discord-link]
-[![Build][github-ci-image]][github-ci-link]
 [![Package Control Downloads][pc-image]][pc-link]
 ![License][license-image]
 # ExportHtml
@@ -40,10 +38,6 @@ https://facelessuser.github.io/ExportHtml
 
 ExportHtml is released under the MIT license.
 
-[github-ci-image]: https://github.com/facelessuser/ExportHtml/workflows/build/badge.svg?branch=master&event=push
-[github-ci-link]: https://github.com/facelessuser/ExportHtml/actions?query=workflow%3Abuild+branch%3Amaster
-[discord-image]: https://img.shields.io/discord/678289859768745989?logo=discord&logoColor=aaaaaa&color=mediumpurple&labelColor=333333
-[discord-link]: https://discord.gg/TWs8Tgr
 [pc-image]: https://img.shields.io/packagecontrol/dt/ExportHtml.svg?labelColor=333333&logo=sublime%20text
 [pc-link]: https://packagecontrol.io/packages/ExportHtml
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?labelColor=333333

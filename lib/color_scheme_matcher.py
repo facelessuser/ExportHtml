@@ -28,8 +28,8 @@ import sublime
 import codecs
 import re
 from .file_strip.json import sanitize_json
-from .st_colormod import Color
 from .tmtheme import ColorSRGBX11
+from mdpopups.st_colormod import Color
 from os import path
 from collections import namedtuple
 from plistlib import readPlistFromBytes
@@ -77,14 +77,13 @@ class SchemeColors(
         [
             'fg', 'fg_simulated', 'bg', "bg_simulated", "style", "color_gradient",
             "fg_selector", "bg_selector", "style_selectors", "color_gradient_selector"
-        ],
-        verbose=False
+        ]
     )
 ):
     """Scheme colors."""
 
 
-class SchemeSelectors(namedtuple('SchemeSelectors', ['name', 'scope'], verbose=False)):
+class SchemeSelectors(namedtuple('SchemeSelectors', ['name', 'scope'])):
     """Scheme selectors."""
 
 

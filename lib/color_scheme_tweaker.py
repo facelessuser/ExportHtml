@@ -6,8 +6,8 @@ Copyright (c) 2013 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import absolute_import
 import sublime
-from .st_colormod import Color
-from mdpopups.coloraide import util
+from mdpopups.st_colormod import Color
+from mdpopups.coloraide import algebra as alg
 import re
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
@@ -18,7 +18,7 @@ FILTER_MATCH = re.compile(
     r'''(?x)
     ^(?:
         (brightness|saturation|hue|contrast|colorize|glow)\((-?[\d]+|[\d]*\.[\d]+)\)|
-        (sepia|grayscale|invert)
+        (sepia|grayscale|invert|protan|deutan|tritan)
     )
     (?:@(fg|bg))?$
     '''
@@ -107,38 +107,56 @@ class _Filters:
     def contrast(color, factor):
         """Adjust contrast."""
 
-        r, g, b = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
+        r, g, b = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
         # Algorithm can't handle any thing beyond +/-255 (or a factor from 0 - 2)
         # Convert factor between (-255, 255)
-        f = (util.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
+        f = (alg.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
         f = (259 * (f + 255)) / (255 * (259 - f))
 
         # Increase/decrease contrast accordingly.
-        r = util.clamp(util.round_half_up((f * (r - 128)) + 128), 0, 255)
-        g = util.clamp(util.round_half_up((f * (g - 128)) + 128), 0, 255)
-        b = util.clamp(util.round_half_up((f * (b - 128)) + 128), 0, 255)
-        color.red = r / 255
-        color.green = g / 255
-        color.blue = b / 255
+        r = alg.clamp(alg.round_half_up((f * (r - 128)) + 128), 0, 255)
+        g = alg.clamp(alg.round_half_up((f * (g - 128)) + 128), 0, 255)
+        b = alg.clamp(alg.round_half_up((f * (b - 128)) + 128), 0, 255)
+        color['red'] = r / 255
+        color['green'] = g / 255
+        color['blue'] = b / 255
+
+    @staticmethod
+    def protan(color):
+        """Invert the color."""
+
+        color.filter('protan', in_place=True)
+
+    @staticmethod
+    def deutan(color):
+        """Invert the color."""
+
+        color.filter('deutan', in_place=True)
+
+    @staticmethod
+    def tritan(color):
+        """Invert the color."""
+
+        color.filter('tritan', in_place=True)
 
     @staticmethod
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [int(util.round_half_up(util.clamp(c * 255, 0, 255))) for c in util.no_nan(color.coords())]
+        r, g, b = [int(alg.round_half_up(alg.clamp(c * 255, 0, 255))) for c in alg.no_nans(color[:-1])]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF
-        color.red = r / 255
-        color.green = g / 255
-        color.blue = b / 255
+        color['red'] = r / 255
+        color['green'] = g / 255
+        color['blue'] = b / 255
 
     @staticmethod
     def saturation(color, factor):
         """Saturate or unsaturate the color by the given factor."""
 
-        s = util.no_nan(color.get('hsl.saturation')) / 100.0
-        s = util.clamp(s + factor - 1.0, 0.0, 1.0)
+        s = alg.no_nan(color.get('hsl.saturation')) / 100.0
+        s = alg.clamp(s + factor - 1.0, 0.0, 1.0)
         color.set('hsl.saturation', s * 100)
 
     @staticmethod
@@ -146,21 +164,21 @@ class _Filters:
         """Convert the color with a grayscale filter."""
 
         luminance = color.luminance()
-        color.red = luminance
-        color.green = luminance
-        color.blue = luminance
+        color['red'] = luminance
+        color['green'] = luminance
+        color['blue'] = luminance
 
     @staticmethod
     def sepia(color):
         """Apply a sepia filter to the color."""
 
-        red, green, blue = util.no_nan(color.coords())
-        r = util.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
-        g = util.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
-        b = util.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
-        color.red = r
-        color.green = g
-        color.blue = b
+        red, green, blue = alg.no_nans(color[:-1])
+        r = alg.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
+        g = alg.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
+        b = alg.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
+        color['red'] = r
+        color['green'] = g
+        color['blue'] = b
 
     @staticmethod
     def _get_overage(c):
@@ -206,9 +224,9 @@ class _Filters:
         Brightness is determined by perceived luminance.
         """
 
-        red, green, blue = [util.round_half_up(util.clamp(c * 255, 0, 255)) for c in util.no_nan(color.coords())]
+        red, green, blue = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
         channels = ["r", "g", "b"]
-        total_lumes = util.clamp(util.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
+        total_lumes = alg.clamp(alg.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
 
         if total_lumes == 255.0:
             # white
@@ -218,7 +236,7 @@ class _Filters:
             r, g, b = 0, 0, 0
         else:
             # Adjust Brightness
-            pts = (total_lumes - util.clamp(color.luminance(), 0, 1) * 255)
+            pts = (total_lumes - alg.clamp(color.luminance(), 0, 1) * 255)
             slots = set(channels)
             components = [float(red) + pts, float(green) + pts, float(blue) + pts]
             count = 0
@@ -229,12 +247,12 @@ class _Filters:
                     components = list(cls._distribute_overage(components, overage, slots))
                 count += 1
 
-            r = util.clamp(util.round_half_up(components[0]), 0, 255) / 255.0
-            g = util.clamp(util.round_half_up(components[1]), 0, 255) / 255.0
-            b = util.clamp(util.round_half_up(components[2]), 0, 255) / 255.0
-        color.red = r
-        color.green = g
-        color.blue = b
+            r = alg.clamp(alg.round_half_up(components[0]), 0, 255) / 255.0
+            g = alg.clamp(alg.round_half_up(components[1]), 0, 255) / 255.0
+            b = alg.clamp(alg.round_half_up(components[2]), 0, 255) / 255.0
+        color['red'] = r
+        color['green'] = g
+        color['blue'] = b
 
 
 class ColorTweaker(object):
@@ -292,7 +310,7 @@ class ColorTweaker(object):
             name = f[0]
             value = f[1]
             context = f[2]
-            if name in ("grayscale", "sepia", "invert"):
+            if name in ("grayscale", "sepia", "invert", "tritan", "protan", "deutan"):
                 if context != "bg":
                     self._apply_filter(rgba_fg, name)
                 if context != "fg":
@@ -358,7 +376,7 @@ class ColorTweaker(object):
 
         filters = []
         for f in self.filters:
-            if f[0] in ("invert", "grayscale", "sepia"):
+            if f[0] in ("invert", "grayscale", "sepia", "tritan", "protan", "deutan"):
                 filters.append(f[0])
             elif f[0] in ("hue", "colorize"):
                 filters.append(f[0] + "(%d)" % int(f[1]))
@@ -416,7 +434,7 @@ class ColorSchemeTweaker(object):
             name = f[0]
             value = f[1]
             context = f[2]
-            if name in ("grayscale", "sepia", "invert"):
+            if name in ("grayscale", "sepia", "invert", "tritan", "protan", "deutan"):
                 if context != "bg":
                     self._apply_filter(rgba_fg, name)
                 if context != "fg":
@@ -516,7 +534,7 @@ class ColorSchemeTweaker(object):
 
         filters = []
         for f in self.filters:
-            if f[0] in ("invert", "grayscale", "sepia"):
+            if f[0] in ("invert", "grayscale", "sepia", "tritan", "protan", "deutan"):
                 filters.append(f[0])
             elif f[0] in ("hue", "colorize"):
                 filters.append(f[0] + "(%d)" % int(f[1]))

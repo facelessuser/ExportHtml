@@ -12,3 +12,4 @@ A restart of Sublime Text is most likely needed.
 - **NEW**: New colorblind filters.
 - **CHORE**: Updates to support newer dependencies.
 - **FIX**: Remove unnecessary dependencies.
+- **FIX**: Fix typo in settings configuration.

@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.18.1
+
+- **FIX**: Require the typing dependency for Python 3.3.
+
 ## 2.18.0
 
 - **NEW**: New colorblind filters.

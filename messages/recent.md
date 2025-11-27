@@ -1,4 +1,4 @@
-# ExportHtml 2.18.0
+# ExportHtml
 
 New release!
 
@@ -7,9 +7,6 @@ for more info about the release.
 
 A restart of Sublime Text is most likely needed.
 
-## 2.18.0
+## 2.19.0
 
-- **NEW**: New colorblind filters.
-- **CHORE**: Updates to support newer dependencies.
-- **FIX**: Remove unnecessary dependencies.
-- **FIX**: Fix typo in settings configuration.
+-   **NEW**: Updates to support Python 3.13 on ST 4201+.

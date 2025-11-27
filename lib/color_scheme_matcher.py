@@ -32,7 +32,7 @@ from .tmtheme import ColorSRGBX11
 from mdpopups.st_colormod import Color
 from os import path
 from collections import namedtuple
-from plistlib import readPlistFromBytes
+import plistlib
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
 FONT_STYLE = "font_style" if int(sublime.version()) >= 3151 else "fontStyle"
@@ -112,7 +112,7 @@ class ColorSchemeMatcher(object):
                 with open(packages_path(self.color_scheme), 'rb') as f:
                     content = f.read()
             self.legacy = True
-            self.convert_format(readPlistFromBytes(XML_COMMENT_RE.sub(b'', content)))
+            self.convert_format(plistlib.loads(XML_COMMENT_RE.sub(b'', content)))
         self.overrides = []
         if NEW_SCHEMES:
             self.merge_overrides()

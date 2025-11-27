@@ -1,200 +1,204 @@
 # ExportHtml
 
+## 2.19.0
+
+-   **NEW**: Updates to support Python 3.13 on ST 4201+.
+
 ## 2.18.1
 
-- **FIX**: Require the typing dependency for Python 3.3.
+-   **FIX**: Require the typing dependency for Python 3.3.
 
 ## 2.18.0
 
-- **NEW**: New colorblind filters.
-- **CHORE**: Updates to support newer dependencies.
-- **FIX**: Remove unnecessary dependencies.
-- **FIX**: Fix typo in settings configuration.
+-   **NEW**: New colorblind filters.
+-   **CHORE**: Updates to support newer dependencies.
+-   **FIX**: Remove unnecessary dependencies.
+-   **FIX**: Fix typo in settings configuration.
 
 ## 2.17.4
 
-- **FIX**: Fix `jinja2` import error.
+-   **FIX**: Fix `jinja2` import error.
 
 ## 2.17.3
 
-- **FIX**: Fix a scheme loading related issue.
-- **FIX**: Ensure ExportHTML will work with Package Control 4.0 (compatibility issues with latest `mdpopups` needed for
-  Package Control 4.0).
+-   **FIX**: Fix a scheme loading related issue.
+-   **FIX**: Ensure ExportHTML will work with Package Control 4.0 (compatibility issues with latest `mdpopups` needed
+    for Package Control 4.0).
 
 ## 2.17.2
 
-- **FIX**: Fix a regression where custom defined schemes are not used.
+-   **FIX**: Fix a regression where custom defined schemes are not used.
 
 ## 2.17.1
 
-- **FIX**: Fix issues with Sublime 4095 `auto` light/dark color scheme option (legacy converter).
-- **FIX**: Reduce dependencies by relying on the `coloraide` in `mdpopups`.
-- **FIX**: Fix some color filter cases.
+-   **FIX**: Fix issues with Sublime 4095 `auto` light/dark color scheme option (legacy converter).
+-   **FIX**: Reduce dependencies by relying on the `coloraide` in `mdpopups`.
+-   **FIX**: Fix some color filter cases.
 
 ## 2.17.0
 
-- **NEW**: Drop BBCode support.
-- **NEW**: Use recent Sublime API commands, such as `view.style()` and `view.style_for_scope()` instead of old legacy
-  method.
-- **NEW**: Use `coloraide` dependency for color handling.
-- **FIX**: Recent changes should allow `min-contrast` usage in themes to work.
-- **FIX**: Recent changes should allow for handling invalid color in color schemes better.
-- **FIX**: Recent changes should fix some issues with hashed schemes.
+-   **NEW**: Drop BBCode support.
+-   **NEW**: Use recent Sublime API commands, such as `view.style()` and `view.style_for_scope()` instead of old legacy
+    method.
+-   **NEW**: Use `coloraide` dependency for color handling.
+-   **FIX**: Recent changes should allow `min-contrast` usage in themes to work.
+-   **FIX**: Recent changes should allow for handling invalid color in color schemes better.
+-   **FIX**: Recent changes should fix some issues with hashed schemes.
 
 ## 2.16.1
 
-- **FIX**: Fix issue with quick start doc not showing images proper.
+-   **FIX**: Fix issue with quick start doc not showing images proper.
 
 ## 2.16.0
 
-- **NEW**: Add `glow` and `underline` support in Sublime syntax color schemes.
+-   **NEW**: Add `glow` and `underline` support in Sublime syntax color schemes.
 
 ## 2.15.1
 
-- **FIX**: ST4 now handles `HSL` properly, remove workaround for build 4069.
-- **FIX**: `+`/`-` have to be followed by spaces in `saturation`, `lightness`, and `alpha` or they should be treated as
-  part of the number following them. `*` does not need a space.
-- **FIX**: Add support for `deg` unit type for the hue channel with `HSL` and `HWB`.
-- **FIX**: Sublime will ignore the unit types `rad`, `grad`, and `turn` for `HSL` and `HWB`, but add support for them in
-  case Sublime ever does.
+-   **FIX**: ST4 now handles `HSL` properly, remove workaround for build 4069.
+-   **FIX**: `+`/`-` have to be followed by spaces in `saturation`, `lightness`, and `alpha` or they should be treated as
+    part of the number following them. `*` does not need a space.
+-   **FIX**: Add support for `deg` unit type for the hue channel with `HSL` and `HWB`.
+-   **FIX**: Sublime will ignore the unit types `rad`, `grad`, and `turn` for `HSL` and `HWB`, but add support for them in
+    case Sublime ever does.
 
 ## 2.15.0
 
-- **NEW**: Support `lightness()` and `saturation()` in color mod functions.
-- **NEW**: Properly support `alpha(+value)`, `alpha(-value)`, `alpha(*value)`, and `alpha(value)`.
-- **NEW**: Suppport `foreground_adjust`.
+-   **NEW**: Support `lightness()` and `saturation()` in color mod functions.
+-   **NEW**: Properly support `alpha(+value)`, `alpha(-value)`, `alpha(*value)`, and `alpha(value)`.
+-   **NEW**: Suppport `foreground_adjust`.
 
 ## 2.14.4
 
-- **FIX**: Fix references to internal color schemes in settings. Color schemes wouldn't load proper as the color scheme
-  names were wrong.
+-   **FIX**: Fix references to internal color schemes in settings. Color schemes wouldn't load proper as the color scheme
+    names were wrong.
 
 ## 2.14.3
 
-- **FIX**: Mimic Sublime in regards to hue blending.
+-   **FIX**: Mimic Sublime in regards to hue blending.
 
 ## 2.14.2
 
-- **FIX**: Fix `HWB` exception.
+-   **FIX**: Fix `HWB` exception.
 
 ## 2.14.1
 
-- **FIX**: Fix some regressions in regard to blending colors.
-- **FIX**: Fix issue where `HWB` blending was used when it shouldn't be.
+-   **FIX**: Fix some regressions in regard to blending colors.
+-   **FIX**: Fix issue where `HWB` blending was used when it shouldn't be.
 
 ## 2.14.0
 
-- **NEW**: Respect `no_bold` and `no_italic` options in `font_options`.
-- **NEW**: Default themes converted to `sublime-color-scheme` format.
-- **NEW**: Handle blending in `HSL` and `HWB` color space.
-- **FIX**: Improved color blending.
+-  **NEW**: Respect `no_bold` and `no_italic` options in `font_options`.
+-  **NEW**: Default themes converted to `sublime-color-scheme` format.
+-  **NEW**: Handle blending in `HSL` and `HWB` color space.
+-  **FIX**: Improved color blending.
 
 ## 2.13.0
 
-- **NEW**: Add support for `hwb()` and `alpha()`/`a()`.
-- **FIX**: Handle `hsl()` in `blend()`.
+-   **NEW**: Add support for `hwb()` and `alpha()`/`a()`.
+-   **FIX**: Handle `hsl()` in `blend()`.
 
 ## 2.12.1
 
-- **FIX**: Allow `-` in variables names. Write color translations to main scheme object and ensure filtering is done after color translations.
+-   **FIX**: Allow `-` in variables names. Write color translations to main scheme object and ensure filtering is done after color translations.
 
 ## 2.12.0
 
-- **NEW**: Better tab conversion algorithm. Converts tabs to spaces based on tab stops (though it doesn't account for character width).
-- **NEW**: Using `disable_nbsp` will insert real tabs or spaces.
-- **NEW**: Settings are gathered from the view under conversion, not the global preferences.
-- **NEW**: Default provided print setups now disables `nbsp` by default to use the exact whitespace in a file.
-- **FIX**: Font in HTML not being displayed correctly.
+-   **NEW**: Better tab conversion algorithm. Converts tabs to spaces based on tab stops (though it doesn't account for character width).
+-   **NEW**: Using `disable_nbsp` will insert real tabs or spaces.
+-   **NEW**: Settings are gathered from the view under conversion, not the global preferences.
+-   **NEW**: Default provided print setups now disables `nbsp` by default to use the exact whitespace in a file.
+-   **FIX**: Font in HTML not being displayed correctly.
 
 ## 2.11.0
 
-- **NEW**: Add support for `.hidden-color-scheme`.
-- **FIX**: Update dependencies.
+-   **NEW**: Add support for `.hidden-color-scheme`.
+-   **FIX**: Update dependencies.
 
 ## 2.10.2
 
-- **FIX**: Create fallback file read for resource race condition.
+-   **FIX**: Create fallback file read for resource race condition.
 
 ## 2.10.1
 
-- **FIX**: Parse legacy `foregroundSelection` properly.
+-   **FIX**: Parse legacy `foregroundSelection` properly.
 
 ## 2.10.0
 
-- **NEW**: Add support `.sublime-color-scheme` hashed syntax highlighting.
-- **FIX**: `.sublime-color-scheme` merge logic.
+-   **NEW**: Add support `.sublime-color-scheme` hashed syntax highlighting.
+-   **FIX**: `.sublime-color-scheme` merge logic.
 
 ## 2.9.1
 
-- **FIX**: Parse color scheme with unexpected extension correctly.
+-   **FIX**: Parse color scheme with unexpected extension correctly.
 
 ## 2.9.0
 
-- **NEW**: Add support for rendering output without tables (Default CSS did change, so if overriding it, you may need to update).
-- **FIX**: Support for irregular `.sublime-color-scheme` values.
+-   **NEW**: Add support for rendering output without tables (Default CSS did change, so if overriding it, you may need to update).
+-   **FIX**: Support for irregular `.sublime-color-scheme` values.
 
 ## 2.8.0
 
-- **NEW**: Add support for per scope selection foreground.
-- **FIX**: Some general color scheme parsing and tweaking issues.
+-   **NEW**: Add support for per scope selection foreground.
+-   **FIX**: Some general color scheme parsing and tweaking issues.
 
 ## 2.7.0
 
-- **NEW**: Add support for `.sublime-color-scheme` files.
-- **NEW**: Drop option to include scheme in output.
+-   **NEW**: Add support for `.sublime-color-scheme` files.
+-   **NEW**: Drop option to include scheme in output.
 
 ## 2.6.0
 
-- **NEW**: Upgrade theme_tweaker and rgba lib which adds the ability to adjust contrast.
-- **FIX**: Don't include document build folder.
+-   **NEW**: Upgrade theme_tweaker and rgba lib which adds the ability to adjust contrast.
+-   **FIX**: Don't include document build folder.
 
 ## 2.5.0
 
-- **NEW**: Add document and settings to the command palette.
-- **FIX**: Quick start image links.
+-   **NEW**: Add document and settings to the command palette.
+-   **FIX**: Quick start image links.
 
 ## 2.4.1
 
-- **FIX**: Hopefully more reliable browser opening (#47).
+-   **FIX**: Hopefully more reliable browser opening (#47).
 
 ## 2.4.0
 
-- **NEW**: Limit popups to 3124+.
-- **FIX**: Better scope matching.
+-   **NEW**: Limit popups to 3124+.
+-   **FIX**: Better scope matching.
 
 ## 2.3.1
 
-- **FIX**: Skip processing popupCss and phantomCss.
+-   **FIX**: Skip processing popupCss and phantomCss.
 
 ## 2.3.0
 
-- **NEW**: Handle X11 named colors in color schemes (#44).
-- **NEW**: By default, don't include color scheme plist in output (to reduce size of output).
-- **NEW**: Quickstart guide available in menu.
-- **NEW**: Links to repo issues and documentation available in menu.
+-   **NEW**: Handle X11 named colors in color schemes (#44).
+-   **NEW**: By default, don't include color scheme plist in output (to reduce size of output).
+-   **NEW**: Quickstart guide available in menu.
+-   **NEW**: Links to repo issues and documentation available in menu.
 
 ## 2.2.2
 
-- **FIX**: Fix changelog links
+-   **FIX**: Fix changelog links
 
 ## 2.2.1
 
-- **Fix**: Fix incorrect changelog title (#43).
+-   **Fix**: Fix incorrect changelog title (#43).
 
 ## 2.2.0
 
-- **NEW**: Add `disable_nbsp` option.
-- **Fix**: JS not loading into HTML.
+-   **NEW**: Add `disable_nbsp` option.
+-   **Fix**: JS not loading into HTML.
 
 ## 2.1.0
 
-- **NEW**: New dependencies.
-- **NEW**: Added changelog and support info command in menu.
-- **NEW**: CSS template is now handled by Jinja2.
-- **NEW**: Add `export_css` setting to specify custom CSS.
+-   **NEW**: New dependencies.
+-   **NEW**: Added changelog and support info command in menu.
+-   **NEW**: CSS template is now handled by Jinja2.
+-   **NEW**: Add `export_css` setting to specify custom CSS.
 
 ## 2.0.0
 
-- **NEW**: Arbitrary jump to 2.0.0 version number
-- **NEW**: Upgrade color libs
-- **NEW**: Get current scheme from view settings instead of global
+-   **NEW**: Arbitrary jump to 2.0.0 version number
+-   **NEW**: Upgrade color libs
+-   **NEW**: Get current scheme from view settings instead of global

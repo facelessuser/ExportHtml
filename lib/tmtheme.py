@@ -4,7 +4,23 @@ from mdpopups.coloraide.spaces.srgb.css import sRGB
 from mdpopups.coloraide.css import parse, serialize
 import re
 
-RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.format(**parse.COLOR_PARTS))
+COLOR_PARTS = {
+    "strict_percent": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?%)",
+    "strict_float": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?)",
+    "strict_angle": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?(?:deg|rad|turn|grad)?)",
+    "percent": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?%|none)",
+    "float": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?|none)",
+    "angle": r"(?:[+\-]?(?:[0-9]*\.)?[0-9]+(?:e[-+]?[0-9]+)?(?:deg|rad|turn|grad)?|none)",
+    "space": r"\s+",
+    "loose_space": r"\s*",
+    "comma": r"\s*,\s*",
+    "slash": r"\s*/\s*",
+    "sep": r"(?:\s*,\s*|\s+)",
+    "asep": r"(?:\s*[,/]\s*|\s+)",
+    "hex": r"[a-f0-9]"
+}
+
+RE_COMPRESS = re.compile(r'(?i)^#({hex})\1({hex})\2({hex})\3(?:({hex})\4)?$'.format(**COLOR_PARTS))
 
 MATCH = re.compile(
     r"""(?xi)
@@ -14,7 +30,7 @@ MATCH = re.compile(
         # Names
         \b(?<!\#)[a-z][a-z0-9]{{2,}}(?!\()\b
     )
-    """.format(**parse.COLOR_PARTS)
+    """.format(**COLOR_PARTS)
 )
 
 name2hex_map = {

@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.19.1
+
+-   **FIX**: Don't rely on matching patterns from older color library.
+
 ## 2.19.0
 
 -   **NEW**: Updates to support Python 3.13 on ST 4201+.

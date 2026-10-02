@@ -107,7 +107,7 @@ class _Filters:
     def contrast(color, factor):
         """Adjust contrast."""
 
-        r, g, b = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
+        r, g, b = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in color.coords(nans=False)]
         # Algorithm can't handle any thing beyond +/-255 (or a factor from 0 - 2)
         # Convert factor between (-255, 255)
         f = (alg.clamp(factor, 0.0, 2.0) - 1.0) * 255.0
@@ -143,7 +143,7 @@ class _Filters:
     def invert(color):
         """Invert the color."""
 
-        r, g, b = [int(alg.round_half_up(alg.clamp(c * 255, 0, 255))) for c in alg.no_nans(color[:-1])]
+        r, g, b = [int(alg.round_half_up(alg.clamp(c * 255, 0, 255))) for c in color.coords(nans=False)]
         r ^= 0xFF
         g ^= 0xFF
         b ^= 0xFF
@@ -172,7 +172,7 @@ class _Filters:
     def sepia(color):
         """Apply a sepia filter to the color."""
 
-        red, green, blue = alg.no_nans(color[:-1])
+        red, green, blue = color.coords(nans=False)
         r = alg.clamp((red * .393) + (green * .769) + (blue * .189), 0, 1)
         g = alg.clamp((red * .349) + (green * .686) + (blue * .168), 0, 1)
         b = alg.clamp((red * .272) + (green * .534) + (blue * .131), 0, 1)
@@ -224,7 +224,7 @@ class _Filters:
         Brightness is determined by perceived luminance.
         """
 
-        red, green, blue = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in alg.no_nans(color[:-1])]
+        red, green, blue = [alg.round_half_up(alg.clamp(c * 255, 0, 255)) for c in color.coords(nans=False)]
         channels = ["r", "g", "b"]
         total_lumes = alg.clamp(alg.clamp(color.luminance(), 0, 1) * 255 + (255.0 * factor) - 255.0, 0.0, 255.0)
 

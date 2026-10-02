@@ -1,5 +1,9 @@
 # ExportHtml
 
+## 2.19.2
+
+-   **FIX**: Fix color parsing issues.
+
 ## 2.19.1
 
 -   **FIX**: Don't rely on matching patterns from older color library.

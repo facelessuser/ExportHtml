@@ -24,6 +24,7 @@ PyMdown
 RGB
 Sublime's
 Twemoji
+Zensical
 boolean
 builtins
 changelog

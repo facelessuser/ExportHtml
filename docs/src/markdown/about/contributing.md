@@ -63,15 +63,14 @@ it is strongly suggested that requesters make an effort to verify before request
 
 ### Running Validation Tests
 
-/// tip | Tip
-If you are running Sublime on a macOS or Linux/Unix system, you run all tests by by running the shell script
-(assuming you have installed your environment fulfills all requirements below):
-
-```
-chmod +x run_tests.sh
-./run_tests.sh
-```
-///
+> [!tip]
+> If you are running Sublime on a macOS or Linux/Unix system, you run all tests by by running the shell script
+> (assuming you have installed your environment fulfills all requirements below):
+> 
+> ```
+> chmod +x run_tests.sh
+> ./run_tests.sh
+> ```
 
 There are a couple of dependencies that must be present before running the tests.
 
@@ -138,10 +137,5 @@ A ton of time has been spent not only creating and supporting this plugin, but a
 you feel it is still lacking, show your appreciation for the plugin by helping to improve the documentation.  Help with
 documentation is always appreciated and can be done via pull requests.  There shouldn't be any need to run validation
 tests if only updating documentation.
-
-You don't have to render the docs locally before pull requesting, but if you wish to, I currently use a combination of
-@mkdocs/mkdocs, the @squidfunk/mkdocs-material, and @facelessuser/pymdown-extensions to render the docs.  You can
-preview the docs if you install these two packages.  The command for previewing the docs is `mkdocs serve` from the root
-directory. You can then view the documents at `localhost:8000`.
 
 --8<-- "refs.md"

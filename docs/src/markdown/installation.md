@@ -18,13 +18,12 @@ show a list of installable plugins.
 
 ## Manual Installation
 
-/// warning | Warning
-This is not the recommended way to install ExportHtml for the average user.  Installing this way **will not** get
-automatically updated.
-
-If you are forking for a pull request, you should **just** clone ExportHtml and run Package Control's
-`Satisfy Dependency` command to get all the dependencies.
-///
+> [!warning]
+> This is not the recommended way to install ExportHtml for the average user.  Installing this way **will not** get
+> automatically updated.
+> 
+> If you are forking for a pull request, you should **just** clone ExportHtml and run Package Control's
+> `Satisfy Dependency` command to get all the dependencies.
 
 For those who want to install ExportHtml without package control, here are the steps.  It understood that some people
 for what ever reason will prefer manually and may even have legitimate reasons to do so.  When going this route, you

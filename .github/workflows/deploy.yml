@@ -13,6 +13,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
     - uses: actions/configure-pages@v6
     - uses: actions/checkout@v7

@@ -5,6 +5,7 @@ on:
     tags:
     - 'st3-*'
     - 'st4-*'
+  workflow_dispatch:
 
 jobs:
 
@@ -27,4 +28,4 @@ jobs:
     - uses: actions/upload-pages-artifact@v5
         with:
           path: site
-      - uses: actions/deploy-pages@v5
+    - uses: actions/deploy-pages@v5
